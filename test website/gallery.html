@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery | Yorkshire Autotech</title>
+  <meta name="description" content="See our recent work — coding & retrofits, ambient lighting, CarPlay installs, starlight headlining, reverse cameras, dashcams, steering wheels and virtual cockpits.">
+  <link rel="canonical" href="https://yorkshireautotech.co.uk/gallery.html">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#191a1c">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Yorkshire Autotech">
+  <meta property="og:title" content="Our Work Gallery | Yorkshire Autotech">
+  <meta property="og:description" content="Real installs photographed at our Bingley workshop — CarPlay, ambient lighting, starlight roofs, cameras and more.">
+  <meta property="og:url" content="https://yorkshireautotech.co.uk/gallery.html">
+  <meta property="og:image" content="https://yorkshireautotech.co.uk/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://res.cloudinary.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="logo-640.png">
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header scrolled" id="siteHeader">
+    <nav class="nav container">
+      <a href="index.html" class="logo">
+        <img src="logo-640.png" alt="Yorkshire Autotech" width="102" height="68">
+        <span class="logo-text">Yorkshire <span class="gold-text">Autotech</span><span class="logo-sub">Auto Electrics</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="index.html#about">Why Us</a></li>
+        <li><a href="gallery.html" class="active">Gallery</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="index.html#contact" class="btn btn-gold btn-sm nav-cta">Book Now</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ===== Page hero ===== -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Our Work</span>
+      <h1>The <span class="gold-text">Gallery</span></h1>
+      <p>Every photo below is a real job from our workshop. Filter by service to see what we can do for your car.</p>
+    </div>
+  </section>
+
+  <!-- ===== Gallery ===== -->
+  <section class="container" style="padding-bottom: 100px;">
+    <div class="gallery-filter-bar" id="galleryFilterBar"></div>
+    <p class="gallery-count" id="galleryCount"></p>
+    <div class="gallery-page-grid" id="galleryPageGrid">
+      <div class="testi-loading">Loading gallery…</div>
+    </div>
+  </section>
+
+  <!-- ===== Lightbox ===== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+    <button class="lightbox-arrow prev" id="lightboxPrev" aria-label="Previous photo">‹</button>
+    <img id="lightboxImg" src="" alt="Yorkshire Autotech work photo">
+    <button class="lightbox-arrow next" id="lightboxNext" aria-label="Next photo">›</button>
+  </div>
+
+  <!-- ===== CTA banner ===== -->
+  <section class="cta-banner">
+    <div class="container">
+      <h2>Like What You See?</h2>
+      <p>Get in touch with your vehicle details and we'll tell you exactly what's possible — with a free, no-obligation quote.</p>
+      <a href="index.html#contact" class="btn">Get A Free Quote</a>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="logo"><img src="logo-640.png" alt="Yorkshire Autotech" width="102" height="68"><span class="logo-text">Yorkshire <span class="gold-text">Autotech</span><span class="logo-sub">Auto Electrics</span></span></a>
+          <p class="footer-about">Premium auto electrical specialists. Coding, retrofits and in-car technology fitted to factory standard — black and gold service, every time.</p>
+        </div>
+        <div>
+          <h4>Services</h4>
+          <ul>
+            <li><a href="index.html#services">Coding &amp; Retrofits</a></li>
+            <li><a href="index.html#services">Ambient Lighting</a></li>
+            <li><a href="index.html#services">CarPlay &amp; Android Auto</a></li>
+            <li><a href="index.html#services">Starlight Headlining</a></li>
+            <li><a href="index.html#services">Virtual Cockpits</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="index.html#about">Why Us</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="areas/index.html">Areas We Cover</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="https://wa.me/447476173159" target="_blank" rel="noopener">07476 173 159 (WhatsApp)</a></li>
+            <li><a href="mailto:bookings@yorkshireautotech.co.uk">bookings@yorkshireautotech.co.uk</a></li>
+            <li><a href="index.html#contact">Find The Workshop</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © <span id="year"></span> Yorkshire Autotech. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/gallery.js"></script>
+</body>
+</html>
