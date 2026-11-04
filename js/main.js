@@ -21,6 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { passive: true });
   }
 
+  /* ----- Floating WhatsApp button (every page that loads this script) ----- */
+  if (!document.querySelector(".wa-float")) {
+    const wa = document.createElement("a");
+    wa.className = "wa-float";
+    wa.href = "https://wa.me/447476173159?text=" + encodeURIComponent("Hi Yorkshire Autotech, I'd like a quote for my car.");
+    wa.target = "_blank";
+    wa.rel = "noopener";
+    wa.setAttribute("aria-label", "Message us on WhatsApp");
+    wa.innerHTML = '<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path fill="currentColor" d="M16 3C8.8 3 3 8.7 3 15.8c0 2.5.7 4.9 2 7L3 29l6.4-2a13 13 0 0 0 6.6 1.8c7.2 0 13-5.7 13-12.8S23.2 3 16 3Zm0 23.4c-2.1 0-4.1-.6-5.9-1.7l-.4-.2-3.8 1.2 1.2-3.7-.3-.4a10.6 10.6 0 0 1-1.7-5.8C5.1 9.9 10 5.2 16 5.2s10.9 4.7 10.9 10.6S22 26.4 16 26.4Zm6-7.9c-.3-.2-1.9-1-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.9 8.9 0 0 1-4.4-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.2 3.2 1.3 3.4c.2.2 2.3 3.5 5.6 4.9 2.1.9 2.9 1 3.9.8.6-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5l-.9-.7Z"/></svg>';
+    document.body.appendChild(wa);
+  }
+
   /* ----- Scroll reveal animations ----- */
   const observer = new IntersectionObserver(
     (entries) => {
@@ -105,14 +117,48 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ----- Booking form ----- */
   const bookingForm = document.getElementById("bookingForm");
   if (bookingForm) {
-    bookingForm.addEventListener("submit", (e) => {
+    bookingForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const success = document.getElementById("formSuccess");
-      if (success) {
-        success.classList.add("show");
-        success.scrollIntoView({ behavior: "smooth", block: "center" });
+      const error = document.getElementById("formError");
+      const button = bookingForm.querySelector('button[type="submit"]');
+      const val = (id) => (document.getElementById(id)?.value || "").trim();
+      const vehicle = [val("formMake"), val("formModel"), val("formYear")].filter(Boolean).join(" ");
+
+      error?.classList.remove("show");
+      button.disabled = true;
+      const label = button.textContent;
+      button.textContent = "Sending…";
+      try {
+        const res = await fetch("https://formsubmit.co/ajax/yorkshireautotech@outlook.com", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            _subject: `New website enquiry — ${val("service") || "General"} — ${val("name")}`,
+            _template: "table",
+            _replyto: val("email"),
+            Name: val("name"),
+            Phone: val("phone"),
+            Email: val("email"),
+            Vehicle: vehicle || "—",
+            Service: val("service"),
+            Message: val("message") || "—",
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || String(data.success) === "false") throw new Error("send failed");
+        success?.classList.add("show");
+        success?.scrollIntoView({ behavior: "smooth", block: "center" });
+        bookingForm.reset();
+      } catch {
+        if (error) {
+          error.innerHTML = 'Sorry, your enquiry could not be sent. Please message us on <a href="https://wa.me/447476173159" target="_blank" rel="noopener">WhatsApp (07476 173 159)</a> instead.';
+          error.classList.add("show");
+        }
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
       }
-      bookingForm.reset();
     });
   }
 
@@ -324,6 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="form-group"><label for="brNotes">Notes</label><textarea id="brNotes" placeholder="Anything we should know? Additional strips, specific requests…"></textarea></div>
         <button type="submit" class="btn btn-gold btn-block">Request Booking — £${total.toLocaleString("en-GB")}</button>
+        <p class="form-privacy">We only use your details to manage your booking. See our <a href="privacy.html">privacy policy</a>.</p>
       </form>`;
 
     /* Populate makes from the shared VEHICLES data if present, else a local list */

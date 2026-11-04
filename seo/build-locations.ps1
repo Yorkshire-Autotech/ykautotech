@@ -20,7 +20,7 @@ function Write-SeoPage([string]$path, [string]$html) {
 }
 
 # ============================ SERVICES ============================
-# Workshop-only (no mobile fitting offered) - every page says so honestly.
+# mobile = $true means we also fit at the customer's location (every service except starlight headlining).
 $services = @(
   [pscustomobject]@{
     slug = "carplay-installation"; name = "Apple CarPlay and Android Auto Installation"
@@ -37,7 +37,7 @@ $services = @(
     desc = "Multi-colour, app-controlled ambient lighting for door cards, dashboard and footwells - with music sync and factory-style integration that looks like it left the factory that way."
     includes = @("64-colour app-controlled LED system","Door card, dash, footwell and console coverage","Music sync and scene modes","Hidden wiring, no visible cables")
     compat = $false
-    mobile = $false
+    mobile = $true
     angle = "transform the cabin feel without any permanent modification"
   },
   [pscustomobject]@{
@@ -91,7 +91,7 @@ $services = @(
     desc = "Unlock your car's hidden features - video in motion, needle sweep, mirror dip, enhanced Bluetooth and OEM+ retrofits, coded properly with dealership-level diagnostic equipment."
     includes = @("Dealer-level diagnostic and coding tools","Hidden feature activation","OEM+ hardware retrofits","Before and after verification")
     compat = $true
-    mobile = $false
+    mobile = $true
     angle = "unlock equipment your car already has but was never switched on"
   },
   [pscustomobject]@{
@@ -100,7 +100,7 @@ $services = @(
     desc = "Component protection cleared on VW Group modules - head units, instrument clusters and control units from another car adapted and coded so they work fully in yours."
     includes = @("Diagnosis of the component protection fault","Module adaptation for Audi, VW, SEAT, Skoda and Cupra","Coding to match your car's specification","Fault codes cleared and full function tested")
     compat = $true
-    mobile = $false
+    mobile = $true
     angle = "get a used or retrofitted module working properly instead of paying for a brand-new part"
     note = "Component protection work depends on the exact module and vehicle - send us the make, model, year and the part you are fitting and we'll confirm what's possible before you travel."
   },
@@ -110,7 +110,7 @@ $services = @(
     desc = "Specialist electrical work for Volkswagen, Audi, SEAT, Skoda and Cupra - hidden feature coding, OEM retrofits, component protection and fault finding using dealer-level VW Group tools."
     includes = @("Hidden feature coding for VW Group cars","OEM retrofits such as virtual cockpit and CarPlay","Component protection and module adaptation","Electrical fault finding and diagnostics")
     compat = $true
-    mobile = $false
+    mobile = $true
     angle = "get dealer-level VW Group expertise without dealer prices"
   },
   [pscustomobject]@{
@@ -119,7 +119,7 @@ $services = @(
     desc = "Dealer-level diagnostics for warning lights, electrical faults and module errors - we find the root cause, explain it in plain English and quote before any repair."
     includes = @("Full vehicle fault code scan","Live data and electrical testing","Clear explanation of what we find","Fixed quote before any repair work")
     compat = $false
-    mobile = $false
+    mobile = $true
     angle = "get to the real cause of a fault instead of guessing and swapping parts"
     note = "We can diagnose almost any make and model. Tell us the make, model, year and the symptoms when you enquire so we can book the right amount of time."
   }
@@ -623,6 +623,7 @@ $sitemapUrls = New-Object System.Collections.Generic.List[string]
 # Main pages
 $sitemapUrls.Add("  <url><loc>$site/</loc><lastmod>$today</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>")
 $sitemapUrls.Add("  <url><loc>$site/gallery.html</loc><lastmod>$today</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>")
+$sitemapUrls.Add("  <url><loc>$site/privacy.html</loc><lastmod>$today</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>")
 # Areas hub + all location pages
 $sitemapUrls.Add("  <url><loc>$site/areas/</loc><lastmod>$today</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>")
 foreach ($svc in $services) {

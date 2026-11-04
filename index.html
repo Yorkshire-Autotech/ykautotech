@@ -57,7 +57,6 @@
       { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "14:30", "closes": "18:00" },
       { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "09:00", "closes": "17:00" }
     ],
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "38" },
     "areaServed": [
       { "@type": "AdministrativeArea", "name": "West Yorkshire" },
       { "@type": "AdministrativeArea", "name": "South Yorkshire" },
@@ -422,7 +421,9 @@
             <label for="message">Message</label>
             <textarea id="message" placeholder="Tell us a bit more about what you're after…"></textarea>
           </div>
+          <p class="form-error" id="formError"></p>
           <button type="submit" class="btn btn-gold btn-block">Request My Free Quote</button>
+          <p class="form-privacy">We only use your details to reply to your enquiry. See our <a href="privacy.html">privacy policy</a>.</p>
         </form>
       </div>
     </div>
@@ -465,7 +466,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        © <span id="year"></span> Yorkshire Autotech. All rights reserved.
+        © <span id="year"></span> Yorkshire Autotech. All rights reserved. · <a href="privacy.html">Privacy Policy</a>
       </div>
     </div>
   </footer>

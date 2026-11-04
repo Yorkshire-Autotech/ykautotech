@@ -2,18 +2,25 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Only this account can see or manage bookings. Any other signed-in
+    // Firebase account is treated the same as a member of the public.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email.lower() == 'yorkshireautotech@outlook.com';
+    }
+
     // Booking requests: anyone can submit one (must be "pending"),
-    // but only the signed-in admin can read or change them.
+    // but only the admin can read or change them.
     match /bookings/{id} {
       allow create: if request.resource.data.status == 'pending';
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if isAdmin();
     }
 
     // Confirmed-slot markers: publicly readable (no personal data)
     // so the website can grey out taken slots; only admin can write.
     match /availability/{id} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
   }
 }
