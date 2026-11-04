@@ -10,9 +10,10 @@ service cloud.firestore {
     }
 
     // Booking requests: anyone can submit one (must be "pending"),
-    // but only the admin can read or change them.
+    // the admin can also add bookings directly (created as "confirmed"),
+    // and only the admin can read or change them.
     match /bookings/{id} {
-      allow create: if request.resource.data.status == 'pending';
+      allow create: if request.resource.data.status == 'pending' || isAdmin();
       allow read, update, delete: if isAdmin();
     }
 
