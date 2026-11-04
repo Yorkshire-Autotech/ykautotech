@@ -217,7 +217,6 @@ $template = @'
       <ul class="nav-links" id="navLinks">
         <li><a href="{{BASE}}/index.html">Home</a></li>
         <li><a href="{{BASE}}/index.html#services">Services</a></li>
-        <li><a href="https://shop.yorkshireautotech.co.uk">Shop</a></li>
         <li><a href="{{BASE}}/gallery.html">Gallery</a></li>
         <li><a href="{{BASE}}/areas/">Areas We Cover</a></li>
         <li><a href="{{BASE}}/index.html#contact">Contact</a></li>
@@ -316,7 +315,6 @@ $template = @'
           <ul>
             <li><a href="{{BASE}}/areas/">Areas We Cover</a></li>
             <li><a href="{{BASE}}/gallery.html">Gallery</a></li>
-            <li><a href="https://shop.yorkshireautotech.co.uk">Shop</a></li>
             <li><a href="{{BASE}}/index.html#contact">Contact</a></li>
           </ul>
         </div>
@@ -484,7 +482,6 @@ $hub = @'
       <ul class="nav-links">
         <li><a href="{{BASE}}/index.html">Home</a></li>
         <li><a href="{{BASE}}/index.html#services">Services</a></li>
-        <li><a href="https://shop.yorkshireautotech.co.uk">Shop</a></li>
         <li><a href="{{BASE}}/gallery.html">Gallery</a></li>
         <li><a href="{{BASE}}/areas/" class="active">Areas We Cover</a></li>
         <li><a href="{{BASE}}/index.html#contact">Contact</a></li>
