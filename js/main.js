@@ -170,7 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
     option.addEventListener("click", () => {
       const tier = option.dataset.ambientOption;
       const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
-      addServiceToBasket(`ambient-lighting-${tier}`, `64-Colour Ambient Lighting — ${tierName}`);
+      const name = tier === "bespoke" ? SERVICE_PRODUCTS["ambient-lighting-bespoke"].name : `64-Colour Ambient Lighting — ${tierName}`;
+      addServiceToBasket(`ambient-lighting-${tier}`, name);
       closeAmbientOptions();
     });
     document.getElementById("closeStarlightOptions")?.addEventListener("click", closeStarlightOptions);
@@ -824,6 +825,7 @@ const SERVICE_PRODUCTS = {
   "ambient-lighting-bronze": { name: "64-Colour Ambient Lighting — Bronze", fitted: 60 },
   "ambient-lighting-silver": { name: "64-Colour Ambient Lighting — Silver", fitted: 200 },
   "ambient-lighting-gold": { name: "64-Colour Ambient Lighting — Gold", fitted: 250 },
+  "ambient-lighting-bespoke": { name: "Bespoke OEM-Style Ambient Lighting (from £400, final price on request)", fitted: 400 },
   "carplay-retrofit": { name: "Wireless CarPlay & Android Auto Retrofit", fitted: 60 },
   "starlight": { name: "Starlight Headliner Kit", fitted: 598 },
   "starlight-bronze": { name: "Starlight Headlining — Bronze Package", fitted: 350 },
