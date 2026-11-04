@@ -93,6 +93,35 @@ $services = @(
     compat = $true
     mobile = $false
     angle = "unlock equipment your car already has but was never switched on"
+  },
+  [pscustomobject]@{
+    slug = "component-protection-removal"; name = "Component Protection Removal"; lower = "component protection removal"
+    icon = "&#128272;"; kw = "component protection removal"; skw = @("vag component protection","audi component protection removal","vw component protection")
+    desc = "Component protection cleared on VW Group modules - head units, instrument clusters and control units from another car adapted and coded so they work fully in yours."
+    includes = @("Diagnosis of the component protection fault","Module adaptation for Audi, VW, SEAT, Skoda and Cupra","Coding to match your car's specification","Fault codes cleared and full function tested")
+    compat = $true
+    mobile = $false
+    angle = "get a used or retrofitted module working properly instead of paying for a brand-new part"
+    note = "Component protection work depends on the exact module and vehicle - send us the make, model, year and the part you are fitting and we'll confirm what's possible before you travel."
+  },
+  [pscustomobject]@{
+    slug = "vag-specialist"; name = "VAG Specialist - VW, Audi, SEAT, Skoda and Cupra"; lower = "VW Group specialist work"
+    icon = "&#128663;"; kw = "VAG specialist"; skw = @("audi specialist","vw coding","skoda coding","seat and cupra coding")
+    desc = "Specialist electrical work for Volkswagen, Audi, SEAT, Skoda and Cupra - hidden feature coding, OEM retrofits, component protection and fault finding using dealer-level VW Group tools."
+    includes = @("Hidden feature coding for VW Group cars","OEM retrofits such as virtual cockpit and CarPlay","Component protection and module adaptation","Electrical fault finding and diagnostics")
+    compat = $true
+    mobile = $false
+    angle = "get dealer-level VW Group expertise without dealer prices"
+  },
+  [pscustomobject]@{
+    slug = "car-diagnostics"; name = "Car Diagnostics and Electrical Fault Finding"; lower = "car diagnostics and electrical fault finding"
+    icon = "&#128269;"; kw = "car diagnostics"; skw = @("auto electrician","electrical fault finding","warning light diagnosis")
+    desc = "Dealer-level diagnostics for warning lights, electrical faults and module errors - we find the root cause, explain it in plain English and quote before any repair."
+    includes = @("Full vehicle fault code scan","Live data and electrical testing","Clear explanation of what we find","Fixed quote before any repair work")
+    compat = $false
+    mobile = $false
+    angle = "get to the real cause of a fault instead of guessing and swapping parts"
+    note = "We can diagnose almost any make and model. Tell us the make, model, year and the symptoms when you enquire so we can book the right amount of time."
   }
 )
 
@@ -123,6 +152,10 @@ $locations = @(
   [pscustomobject]@{ slug="keighley"; name="Keighley"; region="West Yorkshire"; tier=3; drive="around 10 minutes"; route="our neighbouring town"; angle="ten minutes away - you can practically walk home" }
   [pscustomobject]@{ slug="shipley"; name="Shipley"; region="West Yorkshire"; tier=3; drive="around 5 minutes"; route="next door to the workshop"; angle="our next-door neighbour" }
   [pscustomobject]@{ slug="ilkley"; name="Ilkley"; region="West Yorkshire"; tier=3; drive="around 15 minutes"; route="up the Wharfe valley"; angle="a short scenic drive down the valley" }
+  [pscustomobject]@{ slug="baildon"; name="Baildon"; region="West Yorkshire"; tier=3; drive="around 10 minutes"; route="via Shipley"; angle="just over the hill from the workshop" }
+  [pscustomobject]@{ slug="guiseley"; name="Guiseley"; region="West Yorkshire"; tier=3; drive="around 20 minutes"; route="via the A6038 and A65"; angle="an easy run across Airedale" }
+  [pscustomobject]@{ slug="silsden"; name="Silsden"; region="West Yorkshire"; tier=3; drive="around 15 minutes"; route="via the A629 and A6034"; angle="a short hop up the Aire valley" }
+  [pscustomobject]@{ slug="haworth"; name="Haworth"; region="West Yorkshire"; tier=3; drive="around 15 minutes"; route="via Cullingworth"; angle="a quick drive over the tops" }
   [pscustomobject]@{ slug="otley"; name="Otley"; region="West Yorkshire"; tier=3; drive="around 20 minutes"; route="via the A6038"; angle="easy run along the valley road" }
   [pscustomobject]@{ slug="dewsbury"; name="Dewsbury"; region="West Yorkshire"; tier=3; drive="around 25 minutes"; route="via the A650"; angle="quick trip across West Yorkshire" }
   [pscustomobject]@{ slug="batley"; name="Batley"; region="West Yorkshire"; tier=3; drive="around 25 minutes"; route="via the A650"; angle="close enough for a same-day drop and collect" }
@@ -185,6 +218,15 @@ $matrix = @{
   "steering-wheel-upgrade"      = @("leeds","manchester","sheffield","york","harrogate","bradford","hull","huddersfield","wakefield","doncaster","halifax","barnsley","rotherham","keighley")
   "virtual-cockpit"             = @("leeds","sheffield","manchester","york","bradford","harrogate","chesterfield","huddersfield","wakefield","halifax","doncaster","hull","rotherham","keighley")
   "coding-and-retrofits"        = @("bradford","leeds","huddersfield","halifax","wakefield","sheffield","skipton","manchester","york","harrogate","doncaster","barnsley","rotherham","hull","keighley","ilkley")
+  "component-protection-removal" = @("bradford","leeds","halifax","huddersfield","wakefield","harrogate","york","sheffield")
+  "vag-specialist"              = @("bradford","leeds","halifax","huddersfield","wakefield","harrogate","york","sheffield")
+  "car-diagnostics"             = @("bradford","leeds","halifax","huddersfield","wakefield","harrogate","york","sheffield")
+}
+
+# Towns close to the Bingley workshop get a page for every service.
+$localTowns = @("shipley","baildon","keighley","ilkley","skipton","otley","guiseley","silsden","haworth")
+foreach ($svc in $services) {
+  $matrix[$svc.slug] = @(@($matrix[$svc.slug]) + $localTowns | Select-Object -Unique)
 }
 
 # ============================ TEMPLATE ============================
@@ -402,7 +444,9 @@ foreach ($svc in $services) {
 
     $includes = ($svc.includes | ForEach-Object { "<li style='font-size:0.95rem'><span style='color:var(--gold);margin-right:8px'>&#9670;</span>$_</li>" }) -join "`n            "
 
-    $compatNote = if ($svc.compat) {
+    $compatNote = if ($svc.note) {
+      $svc.note
+    } elseif ($svc.compat) {
       "Compatibility depends on your exact vehicle and head unit - tell us the make, model and year when you enquire and we'll confirm what's possible before you travel."
     } else {
       "Suitable for almost all vehicles. Tell us your make, model and year when you enquire and we'll confirm the best kit for your car."
@@ -439,7 +483,8 @@ foreach ($svc in $services) {
     $html = $html.Replace("{{ANGLE_TEXT}}", $angleText)
     $html = $html.Replace("{{OTHER_LINKS}}", $otherLinks)
     $html = $html.Replace("{{YEAR}}", (Get-Date).Year.ToString())
-    $html = $html.Replace("{{SERVICE_LOWER}}", $svc.name.ToLower())
+    $serviceLower = if ($svc.lower) { $svc.lower } else { $svc.name.ToLower() }
+    $html = $html.Replace("{{SERVICE_LOWER}}", $serviceLower)
     $html = $html.Replace("{{BASE}}", "../../..")
 
     $outDir = Join-Path $root "services\$($svc.slug)\$($loc.slug)"
