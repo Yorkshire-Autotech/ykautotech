@@ -3,9 +3,21 @@
 # Generates static pages at /services/{service}/{location}/index.html,
 # an areas hub at /areas/index.html, and the planning matrix at seo/seo-plan.csv
 # The main site pages are never touched by this script.
+# Pages that already exist only get their <head> (hidden SEO data) refreshed;
+# their visible content is kept as-is. Delete a page first to fully regenerate it.
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path $PSScriptRoot -Parent   # site root = parent of /seo
+
+function Write-SeoPage([string]$path, [string]$html) {
+  $utf8 = New-Object System.Text.UTF8Encoding $false
+  if (Test-Path -LiteralPath $path) {
+    $existing = [IO.File]::ReadAllText($path, $utf8)
+    $oi = $existing.IndexOf("</head>"); $ni = $html.IndexOf("</head>")
+    if ($oi -ge 0 -and $ni -ge 0) { $html = $html.Substring(0, $ni) + $existing.Substring($oi) }
+  }
+  [IO.File]::WriteAllText($path, $html, $utf8)
+}
 
 # ============================ SERVICES ============================
 # Workshop-only (no mobile fitting offered) - every page says so honestly.
@@ -432,7 +444,7 @@ foreach ($svc in $services) {
 
     $outDir = Join-Path $root "services\$($svc.slug)\$($loc.slug)"
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-    [IO.File]::WriteAllText((Join-Path $outDir "index.html"), $html, (New-Object System.Text.UTF8Encoding $false))
+    Write-SeoPage (Join-Path $outDir "index.html") $html
     $built++
 
     $areaLinks[$svc.slug].Add("<a href='..$url' style='color:var(--gold);text-decoration:none'>$($loc.name)</a>")
@@ -555,7 +567,7 @@ $hub = @'
 $hub = $hub.Replace("{{HUB_SECTIONS}}", $hubSections).Replace("{{YEAR}}", (Get-Date).Year.ToString()).Replace("{{BASE}}", "..")
 $areasDir = Join-Path $root "areas"
 New-Item -ItemType Directory -Force -Path $areasDir | Out-Null
-[IO.File]::WriteAllText((Join-Path $areasDir "index.html"), $hub, (New-Object System.Text.UTF8Encoding $false))
+Write-SeoPage (Join-Path $areasDir "index.html") $hub
 
 # ============================ SITEMAP + ROBOTS ============================
 # Search engines discover the location pages via sitemap.xml - no customer-facing links needed.
