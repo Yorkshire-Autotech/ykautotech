@@ -9,11 +9,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!backend.isLive) demoBanner.style.display = "block";
 
+  /* Must match the admin email in firestore.rules */
+  const ADMIN_EMAIL = "yorkshireautotech@outlook.com";
+
   /* ----- Auth ----- */
   backend.onAdminAuth((user) => {
     const signedIn = !!user;
     loginBox.style.display = signedIn || !backend.isLive ? "none" : "block";
     dashboard.style.display = signedIn ? "block" : "none";
+    if (signedIn && backend.isLive) {
+      const email = (user.email || "").toLowerCase();
+      document.getElementById("signedInAs").textContent = `Signed in as ${user.email || "(no email)"}`;
+      const warn = document.getElementById("adminAccountWarning");
+      warn.textContent = email === ADMIN_EMAIL ? "" :
+        `This account isn't the admin account (${ADMIN_EMAIL}), so bookings can't be loaded or changed. Sign out and sign in with ${ADMIN_EMAIL}.`;
+      warn.classList.toggle("show", email !== ADMIN_EMAIL);
+    }
     if (signedIn) loadBookings();
   });
 
