@@ -1,4 +1,4 @@
-# Yorkshire Autotech - SEO location page generator
+﻿# Yorkshire Autotech - SEO location page generator
 # Run from the site root:  powershell -ExecutionPolicy Bypass -File seo/build-locations.ps1
 # Generates static pages at /services/{service}/{location}/index.html,
 # an areas hub at /areas/index.html, and the planning matrix at seo/seo-plan.csv
@@ -165,14 +165,14 @@ $locations = @(
 # ============================ SERVICE-LOCATION MATRIX ============================
 # Which locations each service gets a page for (tier-1 set first, then a few tier-2).
 $matrix = @{
-  "carplay-installation"        = @("leeds","sheffield","bradford","york","hull","manchester","harrogate","huddersfield","doncaster")
-  "ambient-lighting"            = @("leeds","bradford","huddersfield","sheffield","york","wakefield","doncaster","halifax")
-  "starlight-headlining"        = @("leeds","sheffield","manchester","york","bradford","hull","harrogate","huddersfield")
-  "reverse-camera-installation" = @("bradford","leeds","halifax","wakefield","barnsley","skipton","rotherham","harrogate")
-  "dashcam-installation"        = @("leeds","bradford","sheffield","york","hull","huddersfield","doncaster","wakefield")
-  "steering-wheel-upgrade"      = @("leeds","manchester","sheffield","york","harrogate","bradford","hull","huddersfield")
-  "virtual-cockpit"             = @("leeds","sheffield","manchester","york","bradford","harrogate","chesterfield","huddersfield")
-  "coding-and-retrofits"        = @("bradford","leeds","huddersfield","halifax","wakefield","sheffield","skipton","manchester","york")
+  "carplay-installation"        = @("leeds","sheffield","bradford","york","hull","manchester","harrogate","huddersfield","doncaster","wakefield","halifax","barnsley","rotherham","skipton","keighley")
+  "ambient-lighting"            = @("leeds","bradford","huddersfield","sheffield","york","wakefield","doncaster","halifax","harrogate","manchester","hull","barnsley","rotherham","keighley","ilkley")
+  "starlight-headlining"        = @("leeds","sheffield","manchester","york","bradford","hull","harrogate","huddersfield","wakefield","doncaster","halifax","barnsley","rotherham","keighley","ilkley")
+  "reverse-camera-installation" = @("bradford","leeds","halifax","wakefield","barnsley","skipton","rotherham","harrogate","huddersfield","sheffield","york","doncaster","hull","keighley")
+  "dashcam-installation"        = @("leeds","bradford","sheffield","york","hull","huddersfield","doncaster","wakefield","halifax","barnsley","rotherham","harrogate","skipton","keighley")
+  "steering-wheel-upgrade"      = @("leeds","manchester","sheffield","york","harrogate","bradford","hull","huddersfield","wakefield","doncaster","halifax","barnsley","rotherham","keighley")
+  "virtual-cockpit"             = @("leeds","sheffield","manchester","york","bradford","harrogate","chesterfield","huddersfield","wakefield","halifax","doncaster","hull","rotherham","keighley")
+  "coding-and-retrofits"        = @("bradford","leeds","huddersfield","halifax","wakefield","sheffield","skipton","manchester","york","harrogate","doncaster","barnsley","rotherham","hull","keighley","ilkley")
 }
 
 # ============================ TEMPLATE ============================
@@ -184,7 +184,22 @@ $template = @'
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{TITLE}} | Yorkshire Autotech</title>
   <meta name="description" content="{{META}}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/">
+  <meta name="geo.region" content="GB-ENG">
+  <meta name="geo.placename" content="Bingley, West Yorkshire">
+  <meta name="geo.position" content="53.8462;-1.8386">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Yorkshire Autotech">
+  <meta property="og:title" content="{{TITLE}} | Yorkshire Autotech">
+  <meta property="og:description" content="{{META}}">
+  <meta property="og:url" content="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/">
+  <meta property="og:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{TITLE}} | Yorkshire Autotech">
+  <meta name="twitter:description" content="{{META}}">
+  <meta name="twitter:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -195,14 +210,31 @@ $template = @'
     "@context": "https://schema.org",
     "@type": "Service",
     "name": "{{SERVICE_NAME}} in {{LOCATION_NAME}}",
+    "serviceType": "{{SERVICE_NAME}}",
+    "description": "{{META}}",
     "provider": {
       "@type": "AutoRepair",
+      "@id": "https://yorkshireautotech.co.uk/#business",
       "name": "Yorkshire Autotech",
+      "url": "https://yorkshireautotech.co.uk/",
+      "image": "https://yorkshireautotech.co.uk/hero-image.jpg",
       "address": { "@type": "PostalAddress", "streetAddress": "Canal Road", "addressLocality": "Bingley", "addressRegion": "West Yorkshire", "postalCode": "BD16 2SR", "addressCountry": "GB" },
+      "geo": { "@type": "GeoCoordinates", "latitude": 53.8462, "longitude": -1.8386 },
       "telephone": "+44 7476 173159"
     },
-    "areaServed": { "@type": "City", "name": "{{LOCATION_NAME}}" },
+    "areaServed": { "@type": "City", "name": "{{LOCATION_NAME}}", "containedInPlace": { "@type": "AdministrativeArea", "name": "{{REGION}}" } },
     "url": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yorkshireautotech.co.uk/" },
+      { "@type": "ListItem", "position": 2, "name": "Areas We Cover", "item": "https://yorkshireautotech.co.uk/areas/" },
+      { "@type": "ListItem", "position": 3, "name": "{{SERVICE_NAME}} in {{LOCATION_NAME}}", "item": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/" }
+    ]
   }
   </script>
 </head>
@@ -400,7 +432,7 @@ foreach ($svc in $services) {
 
     $outDir = Join-Path $root "services\$($svc.slug)\$($loc.slug)"
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-    Set-Content -Path (Join-Path $outDir "index.html") -Value $html -NoNewline -Encoding UTF8
+    [IO.File]::WriteAllText((Join-Path $outDir "index.html"), $html, (New-Object System.Text.UTF8Encoding $false))
     $built++
 
     $areaLinks[$svc.slug].Add("<a href='..$url' style='color:var(--gold);text-decoration:none'>$($loc.name)</a>")
@@ -523,7 +555,7 @@ $hub = @'
 $hub = $hub.Replace("{{HUB_SECTIONS}}", $hubSections).Replace("{{YEAR}}", (Get-Date).Year.ToString()).Replace("{{BASE}}", "..")
 $areasDir = Join-Path $root "areas"
 New-Item -ItemType Directory -Force -Path $areasDir | Out-Null
-Set-Content -Path (Join-Path $areasDir "index.html") -Value $hub -NoNewline -Encoding UTF8
+[IO.File]::WriteAllText((Join-Path $areasDir "index.html"), $hub, (New-Object System.Text.UTF8Encoding $false))
 
 # ============================ SITEMAP + ROBOTS ============================
 # Search engines discover the location pages via sitemap.xml - no customer-facing links needed.
@@ -548,15 +580,16 @@ $sitemap = @"
 $($sitemapUrls -join "`n")
 </urlset>
 "@
-Set-Content -Path (Join-Path $root "sitemap.xml") -Value $sitemap -NoNewline -Encoding UTF8
+[IO.File]::WriteAllText((Join-Path $root "sitemap.xml"), $sitemap, (New-Object System.Text.UTF8Encoding $false))
 
 $robots = @"
 User-agent: *
 Allow: /
+Disallow: /admin.html
 
 Sitemap: $site/sitemap.xml
 "@
-Set-Content -Path (Join-Path $root "robots.txt") -Value $robots -NoNewline -Encoding UTF8
+[IO.File]::WriteAllText((Join-Path $root "robots.txt"), $robots, (New-Object System.Text.UTF8Encoding $false))
 
 Write-Output "Built $built location pages"
 Write-Output "Planning matrix: $planPath"
