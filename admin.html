@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Bookings Admin | Yorkshire Autotech</title>
+  <link rel="icon" type="image/png" href="logo-640.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { padding: 40px 20px; }
+    .admin-wrap { max-width: 860px; margin: 0 auto; }
+    .admin-wrap h1 { font-size: 2rem; margin-bottom: 6px; }
+    .admin-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 28px; }
+    .admin-banner {
+      background: rgba(189, 144, 72, 0.1);
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 0.85rem;
+      color: var(--gold-light);
+      margin-bottom: 24px;
+    }
+    .admin-login {
+      max-width: 380px;
+      background: var(--black-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .admin-login .form-group { margin-bottom: 16px; }
+    .admin-login label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+    .admin-login input {
+      width: 100%; padding: 12px 14px; background: var(--black-3);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+    }
+    .admin-error { color: #e06c6c; font-size: 0.85rem; margin-top: 10px; display: none; }
+    .admin-error.show { display: block; }
+    .admin-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .section-label {
+      font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold); margin: 30px 0 14px;
+    }
+    .booking-card {
+      background: var(--black-2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px 22px; margin-bottom: 14px;
+    }
+    .booking-card.confirmed { border-left: 3px solid #4caf7d; }
+    .booking-card.pending { border-left: 3px solid var(--gold); }
+    .booking-card.rejected { border-left: 3px solid #e06c6c; opacity: 0.55; }
+    .bc-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .bc-when { font-weight: 600; color: var(--gold-light); }
+    .bc-ref { font-size: 0.8rem; color: var(--text-muted); }
+    .bc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px 18px; font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px; }
+    .bc-grid strong { color: var(--text); font-weight: 500; }
+    .bc-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .bc-actions .btn { padding: 10px 20px; font-size: 0.8rem; }
+    .btn-danger { background: none; border: 1px solid #e06c6c; color: #e06c6c; }
+    .btn-danger:hover { background: rgba(224, 108, 108, 0.12); }
+    .admin-empty { color: var(--text-muted); font-size: 0.9rem; padding: 10px 0 20px; }
+    .add-booking {
+      background: var(--black-2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px;
+    }
+    .ab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 16px; }
+    .ab-grid label { display: block; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px; }
+    .ab-grid input, .ab-grid select {
+      width: 100%; padding: 11px 13px; background: var(--black-3);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem;
+    }
+    .ab-grid input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.75) sepia(0.4) saturate(3) hue-rotate(5deg); cursor: pointer; }
+    .add-booking .btn { padding: 11px 24px; font-size: 0.82rem; }
+    .status-pill { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; border: 1px solid currentColor; }
+    .status-pill.pending { color: var(--gold); }
+    .status-pill.confirmed { color: #4caf7d; }
+    .status-pill.rejected { color: #e06c6c; }
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+    <h1>Bookings <span class="gold-text">Admin</span></h1>
+    <p class="admin-sub">Confirm a request to block its time slot on the website. Cancelling a confirmed booking frees the slot again.</p>
+
+    <div class="admin-banner" id="demoBanner" style="display:none">
+      ⚠ <strong>Demo mode</strong> — Firebase isn't configured yet, so bookings are stored in this browser only.
+      Fill in <code>js/firebase-config.js</code> to go live.
+    </div>
+
+    <!-- Login (live mode only) -->
+    <div class="admin-login" id="loginBox" style="display:none">
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="adminEmail">Email</label>
+          <input type="email" id="adminEmail" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="adminPassword">Password</label>
+          <input type="password" id="adminPassword" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-gold btn-block">Sign In</button>
+        <p class="admin-error" id="loginError">Sign-in failed — check your email and password.</p>
+      </form>
+    </div>
+
+    <!-- Bookings dashboard -->
+    <div id="dashboard" style="display:none">
+      <div class="admin-toolbar">
+        <button class="btn btn-outline" id="refreshBtn">↻ Refresh</button>
+        <button class="btn btn-outline" id="signOutBtn">Sign Out</button>
+      </div>
+
+      <p class="section-label">Add a Booking</p>
+      <form id="addBookingForm" class="add-booking">
+        <div class="ab-grid">
+          <div>
+            <label for="abDate">Date *</label>
+            <input type="date" id="abDate" required>
+          </div>
+          <div>
+            <label for="abSlot">Time Slot *</label>
+            <select id="abSlot" required disabled><option value="">Pick a date first</option></select>
+          </div>
+          <div>
+            <label for="abName">Customer Name *</label>
+            <input type="text" id="abName" required placeholder="Name">
+          </div>
+          <div>
+            <label for="abPhone">Phone</label>
+            <input type="tel" id="abPhone" placeholder="07...">
+          </div>
+          <div>
+            <label for="abItems">Job / Service</label>
+            <input type="text" id="abItems" placeholder="e.g. Dashcam install">
+          </div>
+          <div>
+            <label for="abNotes">Notes</label>
+            <input type="text" id="abNotes" placeholder="Optional">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-gold">＋ Add booking &amp; block slot</button>
+        <p class="admin-error" id="addError"></p>
+      </form>
+
+      <p class="section-label">Pending Requests</p>
+      <div id="pendingList"></div>
+      <p class="section-label">Confirmed Bookings</p>
+      <div id="confirmedList"></div>
+      <p class="section-label">Rejected / Cancelled</p>
+      <div id="rejectedList"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/booking-backend.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
