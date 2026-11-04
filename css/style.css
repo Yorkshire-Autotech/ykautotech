@@ -1043,6 +1043,8 @@ button.cal-cell:hover { border-color: var(--gold); }
   .hero-cta .btn { width: 100%; }
   .hero-scroll { display: none; }
   .modal { padding: 30px 22px; }
+  .ambient-options-grid { grid-template-columns: 1fr; }
+  .ambient-option { min-height: 108px; }
   .cart-item { flex-direction: column; }
   .contact-detail span { word-break: break-word; }
 }

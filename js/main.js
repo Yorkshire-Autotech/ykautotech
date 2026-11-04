@@ -174,15 +174,16 @@ document.addEventListener("DOMContentLoaded", () => {
       addServiceToBasket(`ambient-lighting-${tier}`, name);
       closeAmbientOptions();
     });
-    document.getElementById("closeStarlightOptions")?.addEventListener("click", closeStarlightOptions);
-    starlightOverlay?.addEventListener("click", closeStarlightOptions);
-    document.querySelectorAll("[data-starlight-option]").forEach((option) => {
-      option.addEventListener("click", () => {
-        const tier = option.dataset.starlightOption;
-        const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
-        addServiceToBasket(`starlight-${tier}`, `Starlight Headlining — ${tierName} Package`);
-        closeStarlightOptions();
-      });
+  });
+
+  document.getElementById("closeStarlightOptions")?.addEventListener("click", closeStarlightOptions);
+  starlightOverlay?.addEventListener("click", closeStarlightOptions);
+  document.querySelectorAll("[data-starlight-option]").forEach((option) => {
+    option.addEventListener("click", () => {
+      const tier = option.dataset.starlightOption;
+      const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+      addServiceToBasket(`starlight-${tier}`, `Starlight Headlining — ${tierName} Package`);
+      closeStarlightOptions();
     });
   });
 
