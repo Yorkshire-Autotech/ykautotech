@@ -623,7 +623,7 @@ $sitemapUrls = New-Object System.Collections.Generic.List[string]
 # Main pages
 $sitemapUrls.Add("  <url><loc>$site/</loc><lastmod>$today</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>")
 $sitemapUrls.Add("  <url><loc>$site/gallery.html</loc><lastmod>$today</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>")
-$sitemapUrls.Add("  <url><loc>$site/privacy.html</loc><lastmod>$today</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>")
+$sitemapUrls.Add("  <url><loc>$site/privacy</loc><lastmod>$today</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>")
 # Areas hub + all location pages
 $sitemapUrls.Add("  <url><loc>$site/areas/</loc><lastmod>$today</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>")
 foreach ($svc in $services) {
