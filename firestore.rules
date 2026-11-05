@@ -6,7 +6,7 @@ service cloud.firestore {
     // Firebase account is treated the same as a member of the public.
     function isAdmin() {
       return request.auth != null
-        && request.auth.token.email.lower() == 'yorkshireautotech@outlook.com';
+        && request.auth.token.email == 'yorkshireautotech@outlook.com';
     }
 
     // Booking requests: anyone can submit one (must be "pending"),
