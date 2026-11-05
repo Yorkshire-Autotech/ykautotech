@@ -72,6 +72,16 @@
     }
     .ab-grid input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.75) sepia(0.4) saturate(3) hue-rotate(5deg); cursor: pointer; }
     .add-booking .btn { padding: 11px 24px; font-size: 0.82rem; }
+    .wa-paste { margin-bottom: 14px; }
+    .wa-paste label { display: block; font-size: 0.85rem; color: var(--text); margin-bottom: 8px; }
+    .wa-paste label span { color: var(--text-muted); font-size: 0.78rem; }
+    .wa-paste textarea {
+      width: 100%; padding: 11px 13px; background: var(--black-3); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font: inherit; font-size: 0.9rem; resize: vertical;
+    }
+    .wa-paste-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+    .wa-paste-result { font-size: 0.82rem; color: var(--text-muted); }
+    .ab-grid .wa-filled { border-color: #4caf7d; }
     .status-pill { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; border: 1px solid currentColor; }
     .status-pill.pending { color: var(--gold); }
     .status-pill.confirmed { color: #4caf7d; }
@@ -114,6 +124,14 @@
       <p class="admin-error" id="adminAccountWarning"></p>
 
       <p class="section-label">Add a Booking</p>
+      <div class="add-booking wa-paste">
+        <label for="waPaste">Paste from WhatsApp <span>— copy the customer's message or contact card, paste it here, then press Fill in details</span></label>
+        <textarea id="waPaste" rows="3" placeholder="e.g. Hi it's Dave, can I book CarPlay for my Kia Rio on 11th November at 2pm? 07568 312777"></textarea>
+        <div class="wa-paste-actions">
+          <button type="button" class="btn btn-outline" id="waFillBtn">⇣ Fill in details</button>
+          <span class="wa-paste-result" id="waPasteResult"></span>
+        </div>
+      </div>
       <form id="addBookingForm" class="add-booking">
         <div class="ab-grid">
           <div>
@@ -131,6 +149,10 @@
           <div>
             <label for="abPhone">Phone</label>
             <input type="tel" id="abPhone" placeholder="07...">
+          </div>
+          <div>
+            <label for="abVehicle">Vehicle</label>
+            <input type="text" id="abVehicle" placeholder="e.g. Kia Rio (2019)">
           </div>
           <div>
             <label for="abItems">Job / Service</label>
@@ -159,6 +181,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/booking-backend.js"></script>
+  <script src="js/whatsapp-paste.js"></script>
   <script src="js/admin.js"></script>
 </body>
 </html>
