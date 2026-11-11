@@ -4,6 +4,7 @@
   <url><loc>https://yorkshireautotech.co.uk/fix-it-myself.html</loc><lastmod>2026-11-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/gallery.html</loc><lastmod>2026-11-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/privacy.html</loc><lastmod>2026-11-11</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/terms.html</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/areas/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/services/ambient-lighting/baildon/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/services/ambient-lighting/barnsley/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -191,23 +192,23 @@
   <url><loc>https://yorkshireautotech.co.uk/services/steering-wheel-upgrade/skipton/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/services/steering-wheel-upgrade/wakefield/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/services/steering-wheel-upgrade/york/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/baildon/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/bradford/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/guiseley/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/halifax/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/harrogate/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/haworth/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/huddersfield/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/ilkley/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/keighley/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/leeds/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/otley/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/sheffield/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/shipley/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/silsden/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/skipton/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/wakefield/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/york/</loc><lastmod>2026-11-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/baildon/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/bradford/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/guiseley/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/halifax/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/harrogate/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/haworth/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/huddersfield/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/ilkley/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/keighley/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/leeds/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/otley/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/sheffield/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/shipley/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/silsden/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/skipton/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/wakefield/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://yorkshireautotech.co.uk/services/vag-specialist/york/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/services/virtual-cockpit/baildon/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/services/virtual-cockpit/bradford/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://yorkshireautotech.co.uk/services/virtual-cockpit/chesterfield/</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>

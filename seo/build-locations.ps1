@@ -361,7 +361,7 @@ $template = @'
           </ul>
         </div>
       </div>
-      <div class="footer-bottom">&copy; {{YEAR}} Yorkshire Autotech. All rights reserved.</div>
+      <div class="footer-bottom">&copy; {{YEAR}} Yorkshire Autotech. All rights reserved. · <a href="{{BASE}}/terms.html">Terms and Conditions</a></div>
     </div>
   </footer>
 
@@ -570,7 +570,7 @@ $hub = @'
 
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-bottom">&copy; {{YEAR}} Yorkshire Autotech. All rights reserved.</div>
+      <div class="footer-bottom">&copy; {{YEAR}} Yorkshire Autotech. All rights reserved. · <a href="{{BASE}}/terms.html">Terms and Conditions</a></div>
     </div>
   </footer>
 </body>
