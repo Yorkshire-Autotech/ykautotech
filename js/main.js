@@ -21,18 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { passive: true });
   }
 
-  /* ----- Floating WhatsApp button (every page that loads this script) ----- */
-  if (!document.querySelector(".wa-float")) {
-    const wa = document.createElement("a");
-    wa.className = "wa-float";
-    wa.href = "https://wa.me/447476173159?text=" + encodeURIComponent("Hi Yorkshire Autotech, I'd like a quote for my car.");
-    wa.target = "_blank";
-    wa.rel = "noopener";
-    wa.setAttribute("aria-label", "Message us on WhatsApp");
-    wa.innerHTML = '<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path fill="currentColor" d="M16 3C8.8 3 3 8.7 3 15.8c0 2.5.7 4.9 2 7L3 29l6.4-2a13 13 0 0 0 6.6 1.8c7.2 0 13-5.7 13-12.8S23.2 3 16 3Zm0 23.4c-2.1 0-4.1-.6-5.9-1.7l-.4-.2-3.8 1.2 1.2-3.7-.3-.4a10.6 10.6 0 0 1-1.7-5.8C5.1 9.9 10 5.2 16 5.2s10.9 4.7 10.9 10.6S22 26.4 16 26.4Zm6-7.9c-.3-.2-1.9-1-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.9 8.9 0 0 1-4.4-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.2 3.2 1.3 3.4c.2.2 2.3 3.5 5.6 4.9 2.1.9 2.9 1 3.9.8.6-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5l-.9-.7Z"/></svg>';
-    document.body.appendChild(wa);
-  }
-
   /* ----- Scroll reveal animations ----- */
   const observer = new IntersectionObserver(
     (entries) => {
@@ -117,48 +105,48 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ----- Booking form ----- */
   const bookingForm = document.getElementById("bookingForm");
   if (bookingForm) {
-    bookingForm.addEventListener("submit", async (e) => {
+    bookingForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const success = document.getElementById("formSuccess");
-      const error = document.getElementById("formError");
-      const button = bookingForm.querySelector('button[type="submit"]');
-      const val = (id) => (document.getElementById(id)?.value || "").trim();
-      const vehicle = [val("formMake"), val("formModel"), val("formYear")].filter(Boolean).join(" ");
+      const val = (id) => (document.getElementById(id) || {}).value || "";
+      const vehicle = [val("formYear"), val("formMake"), val("formModel")].filter(Boolean).join(" ");
+      const enquiry = {
+        ref: "YQ-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+        name: val("name").trim(),
+        phone: val("phone").trim(),
+        email: val("email").trim(),
+        vehicle,
+        service: val("service"),
+        message: val("message").trim(),
+      };
 
-      error?.classList.remove("show");
-      button.disabled = true;
-      const label = button.textContent;
-      button.textContent = "Sending…";
-      try {
-        const res = await fetch("https://formsubmit.co/ajax/yorkshireautotech@outlook.com", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            _subject: `New website enquiry — ${val("service") || "General"} — ${val("name")}`,
-            _template: "table",
-            _replyto: val("email"),
-            Name: val("name"),
-            Phone: val("phone"),
-            Email: val("email"),
-            Vehicle: vehicle || "—",
-            Service: val("service"),
-            Message: val("message") || "—",
-          }),
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || String(data.success) === "false") throw new Error("send failed");
-        success?.classList.add("show");
-        success?.scrollIntoView({ behavior: "smooth", block: "center" });
-        bookingForm.reset();
-      } catch {
-        if (error) {
-          error.innerHTML = 'Sorry, your enquiry could not be sent. Please message us on <a href="https://wa.me/447476173159" target="_blank" rel="noopener">WhatsApp (07476 173 159)</a> instead.';
-          error.classList.add("show");
-        }
-      } finally {
-        button.disabled = false;
-        button.textContent = label;
+      const backend = window.BookingBackend;
+      if (backend) backend.submitEnquiry(enquiry).catch(() => {});
+
+      const waMessage =
+        `Hi Yorkshire Autotech! I'd like a free quote.\n\n` +
+        `Reference: ${enquiry.ref}\n` +
+        `Name: ${enquiry.name}\n` +
+        `Phone: ${enquiry.phone}\n` +
+        `Email: ${enquiry.email}\n` +
+        (vehicle ? `Vehicle: ${vehicle}\n` : "") +
+        `Service: ${enquiry.service}\n` +
+        (enquiry.message ? `Message: ${enquiry.message}\n` : "") +
+        `\nThanks!`;
+      const waHref = backend
+        ? backend.waLink(backend.businessWhatsApp, waMessage)
+        : `https://wa.me/447476173159?text=${encodeURIComponent(waMessage)}`;
+      window.open(waHref, "_blank", "noopener");
+
+      const success = document.getElementById("formSuccess");
+      if (success) {
+        success.innerHTML =
+          `⚠️ <strong>Almost done — your enquiry isn't sent until you press send in WhatsApp.</strong><br>` +
+          `WhatsApp should have opened with your details filled in. If it didn't, use the button below.` +
+          `<a class="btn btn-gold btn-block" href="${waHref}" target="_blank" rel="noopener">💬 Send My Enquiry on WhatsApp</a>`;
+        success.classList.add("show");
+        success.scrollIntoView({ behavior: "smooth", block: "center" });
       }
+      bookingForm.reset();
     });
   }
 
@@ -216,20 +204,18 @@ document.addEventListener("DOMContentLoaded", () => {
     option.addEventListener("click", () => {
       const tier = option.dataset.ambientOption;
       const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
-      const name = tier === "bespoke" ? SERVICE_PRODUCTS["ambient-lighting-bespoke"].name : `64-Colour Ambient Lighting — ${tierName}`;
-      addServiceToBasket(`ambient-lighting-${tier}`, name);
+      addServiceToBasket(`ambient-lighting-${tier}`, `64-Colour Ambient Lighting — ${tierName}`);
       closeAmbientOptions();
     });
-  });
-
-  document.getElementById("closeStarlightOptions")?.addEventListener("click", closeStarlightOptions);
-  starlightOverlay?.addEventListener("click", closeStarlightOptions);
-  document.querySelectorAll("[data-starlight-option]").forEach((option) => {
-    option.addEventListener("click", () => {
-      const tier = option.dataset.starlightOption;
-      const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
-      addServiceToBasket(`starlight-${tier}`, `Starlight Headlining — ${tierName} Package`);
-      closeStarlightOptions();
+    document.getElementById("closeStarlightOptions")?.addEventListener("click", closeStarlightOptions);
+    starlightOverlay?.addEventListener("click", closeStarlightOptions);
+    document.querySelectorAll("[data-starlight-option]").forEach((option) => {
+      option.addEventListener("click", () => {
+        const tier = option.dataset.starlightOption;
+        const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+        addServiceToBasket(`starlight-${tier}`, `Starlight Headlining — ${tierName} Package`);
+        closeStarlightOptions();
+      });
     });
   });
 
@@ -369,8 +355,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="date-error" id="brSlotError">Please choose a time slot.</span>
         </div>
         <div class="form-group"><label for="brNotes">Notes</label><textarea id="brNotes" placeholder="Anything we should know? Additional strips, specific requests…"></textarea></div>
+        <div class="wa-notice">💬 <strong>Please note:</strong> after you request your booking, you'll need to <strong>send your booking to us on WhatsApp</strong> (it's pre-written for you). Your booking isn't confirmed until we receive it on WhatsApp.</div>
         <button type="submit" class="btn btn-gold btn-block">Request Booking — £${total.toLocaleString("en-GB")}</button>
-        <p class="form-privacy">We only use your details to manage your booking. See our <a href="privacy.html">privacy policy</a>.</p>
       </form>`;
 
     /* Populate makes from the shared VEHICLES data if present, else a local list */
@@ -565,7 +551,7 @@ document.addEventListener("DOMContentLoaded", () => {
       slotContent.innerHTML = `
         <div class="checkout-success">
           <div class="tick">✅</div>
-          <h3>Booking Request Received</h3>
+          <h3>One Last Step — Send It on WhatsApp</h3>
           <p>Thank you! Your reference is <span class="order-ref">${ref}</span>.<br>
           We've received your request for <strong style="color:var(--gold-light)">${names}</strong>${vehicleStr ? ` for your ${vehicleStr}` : ""} on <strong style="color:var(--gold-light)">${dateLabel}</strong> at <strong style="color:var(--gold-light)">${slotText}</strong>.<br><br>
           <strong>Nothing is booked in yet</strong> — <strong style="color:var(--gold-light)">please confirm your details with us via WhatsApp</strong> using the button below, and we'll get you booked in. You can also reach us by phone or email if you prefer.</p>
@@ -873,7 +859,6 @@ const SERVICE_PRODUCTS = {
   "ambient-lighting-bronze": { name: "64-Colour Ambient Lighting — Bronze", fitted: 60 },
   "ambient-lighting-silver": { name: "64-Colour Ambient Lighting — Silver", fitted: 200 },
   "ambient-lighting-gold": { name: "64-Colour Ambient Lighting — Gold", fitted: 250 },
-  "ambient-lighting-bespoke": { name: "Bespoke OEM-Style Ambient Lighting (from £400, final price on request)", fitted: 400 },
   "carplay-retrofit": { name: "Wireless CarPlay & Android Auto Retrofit", fitted: 60 },
   "starlight": { name: "Starlight Headliner Kit", fitted: 598 },
   "starlight-bronze": { name: "Starlight Headlining — Bronze Package", fitted: 350 },

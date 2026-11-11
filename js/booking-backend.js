@@ -73,6 +73,11 @@
     try { return JSON.parse(localStorage.getItem(DEMO_KEY)) || []; } catch { return []; }
   };
   const demoWrite = (list) => localStorage.setItem(DEMO_KEY, JSON.stringify(list));
+  const DEMO_ENQ_KEY = "ya_demo_enquiries";
+  const demoReadEnquiries = () => {
+    try { return JSON.parse(localStorage.getItem(DEMO_ENQ_KEY)) || []; } catch { return []; }
+  };
+  const demoWriteEnquiries = (list) => localStorage.setItem(DEMO_ENQ_KEY, JSON.stringify(list));
 
   /* ----- Public API ----- */
   const api = {
@@ -132,7 +137,42 @@
       } catch { /* ignore */ }
     },
 
+    /* Quote enquiry from the contact form — saved silently for the admin. */
+    async submitEnquiry(enquiry) {
+      const record = Object.assign({}, enquiry, {
+        status: "new",
+        createdAt: new Date().toISOString(),
+      });
+      if (isLive) {
+        await db.collection("enquiries").add(record);
+      } else {
+        const list = demoReadEnquiries();
+        record.id = "demo-enq-" + Date.now();
+        list.push(record);
+        demoWriteEnquiries(list);
+      }
+    },
+
     /* ===== Admin functions (admin.html) ===== */
+
+    async getEnquiries() {
+      if (isLive) {
+        const snap = await db.collection("enquiries").orderBy("createdAt", "desc").get();
+        return snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      }
+      return demoReadEnquiries().slice().reverse();
+    },
+
+    async setEnquiryStatus(id, status) {
+      if (isLive) {
+        await db.collection("enquiries").doc(id).update({ status });
+      } else {
+        const list = demoReadEnquiries();
+        const target = list.find((e) => e.id === id);
+        if (target) target.status = status;
+        demoWriteEnquiries(list);
+      }
+    },
 
     async adminSignIn(email, password) {
       if (!isLive) return; // demo mode needs no login
