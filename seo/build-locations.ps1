@@ -184,7 +184,22 @@ $template = @'
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{TITLE}} | Yorkshire Autotech</title>
   <meta name="description" content="{{META}}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/">
+  <meta name="geo.region" content="GB-ENG">
+  <meta name="geo.placename" content="Bingley, West Yorkshire">
+  <meta name="geo.position" content="53.8462;-1.8386">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Yorkshire Autotech">
+  <meta property="og:title" content="{{TITLE}} | Yorkshire Autotech">
+  <meta property="og:description" content="{{META}}">
+  <meta property="og:url" content="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/">
+  <meta property="og:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{TITLE}} | Yorkshire Autotech">
+  <meta name="twitter:description" content="{{META}}">
+  <meta name="twitter:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -195,14 +210,31 @@ $template = @'
     "@context": "https://schema.org",
     "@type": "Service",
     "name": "{{SERVICE_NAME}} in {{LOCATION_NAME}}",
+    "serviceType": "{{SERVICE_NAME}}",
+    "description": "{{META}}",
     "provider": {
       "@type": "AutoRepair",
+      "@id": "https://yorkshireautotech.co.uk/#business",
       "name": "Yorkshire Autotech",
+      "url": "https://yorkshireautotech.co.uk/",
+      "image": "https://yorkshireautotech.co.uk/hero-image.jpg",
       "address": { "@type": "PostalAddress", "streetAddress": "Canal Road", "addressLocality": "Bingley", "addressRegion": "West Yorkshire", "postalCode": "BD16 2SR", "addressCountry": "GB" },
+      "geo": { "@type": "GeoCoordinates", "latitude": 53.8462, "longitude": -1.8386 },
       "telephone": "+44 7476 173159"
     },
-    "areaServed": { "@type": "City", "name": "{{LOCATION_NAME}}" },
+    "areaServed": { "@type": "City", "name": "{{LOCATION_NAME}}", "containedInPlace": { "@type": "AdministrativeArea", "name": "{{REGION}}" } },
     "url": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yorkshireautotech.co.uk/" },
+      { "@type": "ListItem", "position": 2, "name": "Areas We Cover", "item": "https://yorkshireautotech.co.uk/areas/" },
+      { "@type": "ListItem", "position": 3, "name": "{{SERVICE_NAME}} in {{LOCATION_NAME}}", "item": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/" }
+    ]
   }
   </script>
 </head>
@@ -356,7 +388,8 @@ foreach ($svc in $services) {
 
     $url = "/services/$($svc.slug)/$($loc.slug)/"
     $title = "$($svc.name) in $($loc.name)"
-    $meta = "$($svc.kw) in $($loc.name), $($loc.region). Dealer-level work at our Bingley workshop - $($loc.drive) away. Fixed quotes, 6-month warranty."
+    $kwCap = $svc.kw.Substring(0,1).ToUpper() + $svc.kw.Substring(1)
+    $meta = "$kwCap in $($loc.name), $($loc.region). Dealer-level work at our Bingley workshop - $($loc.drive) away. Fixed quotes, 6-month warranty."
 
     $includes = ($svc.includes | ForEach-Object { "<li style='font-size:0.95rem'><span style='color:var(--gold);margin-right:8px'>&#9670;</span>$_</li>" }) -join "`n            "
 
@@ -468,9 +501,29 @@ $hub = @'
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Areas We Cover | Yorkshire Autotech</title>
+  <title>Areas We Cover Across Yorkshire | Yorkshire Autotech</title>
   <meta name="description" content="Yorkshire Autotech serves customers across Yorkshire and beyond from our Bingley workshop - Leeds, Bradford, Sheffield, York, Hull, Manchester and more.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://yorkshireautotech.co.uk/areas/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Yorkshire Autotech">
+  <meta property="og:title" content="Areas We Cover Across Yorkshire | Yorkshire Autotech">
+  <meta property="og:description" content="Customers travel to our Bingley workshop from across Yorkshire and beyond - Leeds, Bradford, Sheffield, York, Hull, Manchester and more.">
+  <meta property="og:url" content="https://yorkshireautotech.co.uk/areas/">
+  <meta property="og:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yorkshireautotech.co.uk/" },
+      { "@type": "ListItem", "position": 2, "name": "Areas We Cover", "item": "https://yorkshireautotech.co.uk/areas/" }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -529,40 +582,9 @@ New-Item -ItemType Directory -Force -Path $areasDir | Out-Null
 Set-Content -Path (Join-Path $areasDir "index.html") -Value $hub -NoNewline -Encoding UTF8
 
 # ============================ SITEMAP + ROBOTS ============================
-# Search engines discover the location pages via sitemap.xml - no customer-facing links needed.
-$today = Get-Date -Format "yyyy-MM-dd"
-$site = "https://yorkshireautotech.co.uk"
-
-$sitemapUrls = New-Object System.Collections.Generic.List[string]
-# Main pages
-$sitemapUrls.Add("  <url><loc>$site/</loc><lastmod>$today</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>")
-$sitemapUrls.Add("  <url><loc>$site/gallery.html</loc><lastmod>$today</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>")
-# Areas hub + all location pages
-$sitemapUrls.Add("  <url><loc>$site/areas/</loc><lastmod>$today</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>")
-foreach ($svc in $services) {
-  foreach ($slug in $matrix[$svc.slug]) {
-    $sitemapUrls.Add("  <url><loc>$site/services/$($svc.slug)/$slug/</loc><lastmod>$today</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>")
-  }
-}
-
-$sitemap = @"
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-$($sitemapUrls -join "`n")
-</urlset>
-"@
-Set-Content -Path (Join-Path $root "sitemap.xml") -Value $sitemap -NoNewline -Encoding UTF8
-
-$robots = @"
-User-agent: *
-Allow: /
-
-Sitemap: $site/sitemap.xml
-"@
-Set-Content -Path (Join-Path $root "robots.txt") -Value $robots -NoNewline -Encoding UTF8
+# Built from every page on disk (not just this script's matrix) so no page is ever left out.
+& (Join-Path $PSScriptRoot "build-sitemap.ps1")
 
 Write-Output "Built $built location pages"
 Write-Output "Planning matrix: $planPath"
 Write-Output "Areas hub: $areasDir\index.html"
-Write-Output "Sitemap: $root\sitemap.xml ($($sitemapUrls.Count) URLs)"
-Write-Output "Robots: $root\robots.txt"
