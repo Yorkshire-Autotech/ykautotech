@@ -1,3 +1,25 @@
-# Legacy SEO slugs can use several old service/location formats. Redirect any
-# root-level hyphenated slug before Cloudflare's homepage fallback serves it.
-/*-* / 302
+# Keep one splat per rule; Cloudflare rejects multiple splats in a source path.
+/apple-carplay-* / 302
+/carplay-* / 302
+/car-play-* / 302
+/android-auto-* / 302
+/car-coding-* / 302
+/vehicle-coding-* / 302
+/coding-* / 302
+/ambient-lighting-* / 302
+/ambient-light-* / 302
+/starlight-headlining-* / 302
+/starlight-* / 302
+/reverse-camera-* / 302
+/reversing-camera-* / 302
+/reverse-cameras-* / 302
+/dashcam-* / 302
+/dashcams-* / 302
+/dash-cam-* / 302
+/steering-wheel-* / 302
+/virtual-cockpit-* / 302
+/component-protection-* / 302
+/vag-specialist-* / 302
+/car-diagnostics-* / 302
+/vehicle-diagnostics-* / 302
+/diagnostics-* / 302
