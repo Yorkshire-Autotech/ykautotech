@@ -438,7 +438,7 @@ foreach ($svc in $services) {
     Set-Content -Path (Join-Path $outDir "index.html") -Value $html -NoNewline -Encoding UTF8
     $built++
 
-    $areaLinks[$svc.slug].Add("<a href='..$url' style='color:var(--gold);text-decoration:none'>$($loc.name)</a>")
+    $areaLinks[$svc.slug].Add("<span>$($loc.name)</span>")
 
     $planRows.Add([pscustomobject]@{
       Service = $svc.name
@@ -491,6 +491,7 @@ $hubSections = ($services | ForEach-Object {
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
               $links
             </p>
+            <p style="margin-top:14px"><a href="../index.html#$($svc.slug)" style="color:var(--gold)">View $($svc.name)</a></p>
           </div>
 "@
 }) -join "`n"
@@ -511,9 +512,15 @@ $hub = @'
   <meta property="og:description" content="Customers travel to our Bingley workshop from across Yorkshire and beyond - Leeds, Bradford, Sheffield, York, Hull, Manchester and more.">
   <meta property="og:url" content="https://yorkshireautotech.co.uk/areas/">
   <meta property="og:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <meta property="og:image:width" content="1620">
+  <meta property="og:image:height" content="971">
+  <meta property="og:image:alt" content="Yorkshire Autotech service areas from Bingley">
   <meta property="og:locale" content="en_GB">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <meta name="twitter:image:alt" content="Yorkshire Autotech service areas from Bingley">
+  <link rel="alternate" hreflang="en-GB" href="https://yorkshireautotech.co.uk/areas/">
+  <link rel="alternate" hreflang="x-default" href="https://yorkshireautotech.co.uk/areas/">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -522,6 +529,19 @@ $hub = @'
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yorkshireautotech.co.uk/" },
       { "@type": "ListItem", "position": 2, "name": "Areas We Cover", "item": "https://yorkshireautotech.co.uk/areas/" }
     ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": "https://yorkshireautotech.co.uk/areas/#webpage",
+    "url": "https://yorkshireautotech.co.uk/areas/",
+    "name": "Areas We Cover Across Yorkshire",
+    "description": "Service areas covered from Yorkshire Autotech's workshop in Bingley, West Yorkshire.",
+    "inLanguage": "en-GB",
+    "about": { "@id": "https://yorkshireautotech.co.uk/#business" },
+    "isPartOf": { "@id": "https://yorkshireautotech.co.uk/#website" }
   }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -534,7 +554,7 @@ $hub = @'
   <header class="site-header scrolled">
     <nav class="nav container">
       <a href="{{BASE}}/index.html" class="logo"><img src="{{BASE}}/logo-640.png" alt="Yorkshire Autotech"><span class="logo-text">Yorkshire <span class="gold-text">Autotech</span><span class="logo-sub">Auto Electrics</span></span></a>
-      <ul class="nav-links">
+      <ul class="nav-links" id="navLinks">
         <li><a href="{{BASE}}/index.html">Home</a></li>
         <li><a href="{{BASE}}/index.html#services">Services</a></li>
         <li><a href="{{BASE}}/gallery.html">Gallery</a></li>
@@ -543,6 +563,7 @@ $hub = @'
       </ul>
       <div class="nav-actions">
         <a href="{{BASE}}/index.html#contact" class="btn btn-gold btn-sm nav-cta">Book Now</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
       </div>
     </nav>
   </header>
@@ -551,7 +572,7 @@ $hub = @'
     <div class="container">
       <span class="eyebrow">Where We Work</span>
       <h1>Areas We <span class="gold-text">Cover</span></h1>
-      <p>One specialist workshop on Canal Road, Bingley - customers travel to us from across Yorkshire and the surrounding counties. Pick your service to see your area.</p>
+      <p>One specialist workshop on Canal Road, Bingley - customers travel to us from across Yorkshire and the surrounding counties. Explore our services below.</p>
     </div>
   </section>
 
@@ -572,6 +593,7 @@ $hub = @'
       <div class="footer-bottom">&copy; {{YEAR}} Yorkshire Autotech. All rights reserved. · <a href="{{BASE}}/terms.html">Terms and Conditions</a></div>
     </div>
   </footer>
+  <script src="{{BASE}}/js/main.js"></script>
 </body>
 </html>
 '@
@@ -581,7 +603,7 @@ New-Item -ItemType Directory -Force -Path $areasDir | Out-Null
 Set-Content -Path (Join-Path $areasDir "index.html") -Value $hub -NoNewline -Encoding UTF8
 
 # ============================ SITEMAP + ROBOTS ============================
-# Built from every page on disk (not just this script's matrix) so no page is ever left out.
+# Build the sitemap from indexable top-level, areas hub and service/location pages.
 & (Join-Path $PSScriptRoot "build-sitemap.ps1")
 
 Write-Output "Built $built location pages"

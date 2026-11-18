@@ -1,7 +1,7 @@
 # Yorkshire Autotech - sitemap.xml + robots.txt builder
 # Run from anywhere:  powershell -ExecutionPolicy Bypass -File seo/build-sitemap.ps1
-# Scans the site for every published page on disk, so new pages are never left
-# out of the sitemap. Pages marked <meta name="robots" content="noindex..."> are skipped.
+# Scans top-level pages, the areas hub and service/location pages.
+# Pages marked <meta name="robots" content="noindex..."> are skipped.
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path $PSScriptRoot -Parent
@@ -13,28 +13,25 @@ function Test-Indexable($path) {
   return -not ($html -match '<meta\s+name="robots"\s+content="[^"]*noindex')
 }
 
-function New-UrlEntry($loc, $file, $changefreq, $priority) {
-  $lastmod = (Get-Item $file).LastWriteTime.ToString("yyyy-MM-dd")
-  return "  <url><loc>$loc</loc><lastmod>$lastmod</lastmod><changefreq>$changefreq</changefreq><priority>$priority</priority></url>"
+function New-UrlEntry($loc) {
+  return "  <url><loc>$loc</loc></url>"
 }
 
 $urls = New-Object System.Collections.Generic.List[string]
 
 # Top-level pages (homepage first, then the rest alphabetically)
-$topPriority = @{ "index.html" = @("weekly", "1.0"); "gallery.html" = @("weekly", "0.8"); "fix-it-myself.html" = @("weekly", "0.8"); "privacy.html" = @("yearly", "0.3") }
 $topPages = Get-ChildItem -Path $root -Filter *.html -File |
   Where-Object { Test-Indexable $_.FullName } |
   Sort-Object @{ Expression = { $_.Name -ne "index.html" } }, Name
 foreach ($p in $topPages) {
   $loc = if ($p.Name -eq "index.html") { "$site/" } else { "$site/$($p.Name)" }
-  $opts = if ($topPriority.ContainsKey($p.Name)) { $topPriority[$p.Name] } else { @("monthly", "0.5") }
-  $urls.Add((New-UrlEntry $loc $p.FullName $opts[0] $opts[1]))
+  $urls.Add((New-UrlEntry $loc))
 }
 
 # Areas hub
 $hub = Join-Path $root "areas\index.html"
 if ((Test-Path $hub) -and (Test-Indexable $hub)) {
-  $urls.Add((New-UrlEntry "$site/areas/" $hub "monthly" "0.6"))
+  $urls.Add((New-UrlEntry "$site/areas/"))
 }
 
 # Every service/location page: /services/{service}/{location}/index.html
@@ -44,7 +41,7 @@ Get-ChildItem -Path $servicesDir -Directory | Sort-Object Name | ForEach-Object 
   Get-ChildItem -Path $_.FullName -Directory | Sort-Object Name | ForEach-Object {
     $page = Join-Path $_.FullName "index.html"
     if ((Test-Path $page) -and (Test-Indexable $page)) {
-      $urls.Add((New-UrlEntry "$site/services/$svc/$($_.Name)/" $page "monthly" "0.6"))
+      $urls.Add((New-UrlEntry "$site/services/$svc/$($_.Name)/"))
     }
   }
 }

@@ -270,6 +270,7 @@ ul { list-style: none; }
 
 /* ---------- Services ---------- */
 .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+.service-card[id] { scroll-margin-top: 110px; }
 .service-card {
   background: var(--black-3);
   border: 1px solid var(--border);

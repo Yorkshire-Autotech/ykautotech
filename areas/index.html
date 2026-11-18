@@ -55,7 +55,7 @@
   <header class="site-header scrolled">
     <nav class="nav container">
       <a href="../index.html" class="logo"><img src="../logo-640.png" alt="Yorkshire Autotech"><span class="logo-text">Yorkshire <span class="gold-text">Autotech</span><span class="logo-sub">Auto Electrics</span></span></a>
-      <ul class="nav-links">
+      <ul class="nav-links" id="navLinks">
         <li><a href="../index.html">Home</a></li>
         <li><a href="../index.html#services">Services</a></li>
         <li><a href="../gallery.html">Gallery</a></li>
@@ -64,6 +64,7 @@
       </ul>
       <div class="nav-actions">
         <a href="../index.html#contact" class="btn btn-gold btn-sm nav-cta">Book Now</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
       </div>
     </nav>
   </header>
@@ -72,7 +73,7 @@
     <div class="container">
       <span class="eyebrow">Where We Work</span>
       <h1>Areas We <span class="gold-text">Cover</span></h1>
-      <p>One specialist workshop on Canal Road, Bingley - customers travel to us from across Yorkshire and the surrounding counties. Pick your service to see your area.</p>
+      <p>One specialist workshop on Canal Road, Bingley - customers travel to us from across Yorkshire and the surrounding counties. Explore our services below.</p>
     </div>
   </section>
 
@@ -81,115 +82,123 @@
             <h3 style="margin-bottom:6px">&#128241; Apple CarPlay and Android Auto Installation</h3>
             <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">Workshop fitting at our Bingley workshop for customers in:</p>
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
-              <a href='../services/carplay-installation/leeds/' style='color:var(--gold);text-decoration:none'>Leeds</a>
-              <a href='../services/carplay-installation/sheffield/' style='color:var(--gold);text-decoration:none'>Sheffield</a>
-              <a href='../services/carplay-installation/bradford/' style='color:var(--gold);text-decoration:none'>Bradford</a>
-              <a href='../services/carplay-installation/york/' style='color:var(--gold);text-decoration:none'>York</a>
-              <a href='../services/carplay-installation/hull/' style='color:var(--gold);text-decoration:none'>Hull</a>
-              <a href='../services/carplay-installation/manchester/' style='color:var(--gold);text-decoration:none'>Manchester</a>
-              <a href='../services/carplay-installation/harrogate/' style='color:var(--gold);text-decoration:none'>Harrogate</a>
-              <a href='../services/carplay-installation/huddersfield/' style='color:var(--gold);text-decoration:none'>Huddersfield</a>
-              <a href='../services/carplay-installation/doncaster/' style='color:var(--gold);text-decoration:none'>Doncaster</a>
+              <span>Leeds</span>
+              <span>Sheffield</span>
+              <span>Bradford</span>
+              <span>York</span>
+              <span>Hull</span>
+              <span>Manchester</span>
+              <span>Harrogate</span>
+              <span>Huddersfield</span>
+              <span>Doncaster</span>
             </p>
+            <p style="margin-top:14px"><a href="../index.html#carplay-installation" style="color:var(--gold)">View Apple CarPlay and Android Auto Installation</a></p>
           </div>
           <div class="form" style="padding:28px;margin-bottom:22px">
             <h3 style="margin-bottom:6px">&#128161; Ambient Lighting Installation</h3>
             <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">Workshop fitting at our Bingley workshop for customers in:</p>
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
-              <a href='../services/ambient-lighting/leeds/' style='color:var(--gold);text-decoration:none'>Leeds</a>
-              <a href='../services/ambient-lighting/bradford/' style='color:var(--gold);text-decoration:none'>Bradford</a>
-              <a href='../services/ambient-lighting/huddersfield/' style='color:var(--gold);text-decoration:none'>Huddersfield</a>
-              <a href='../services/ambient-lighting/sheffield/' style='color:var(--gold);text-decoration:none'>Sheffield</a>
-              <a href='../services/ambient-lighting/york/' style='color:var(--gold);text-decoration:none'>York</a>
-              <a href='../services/ambient-lighting/wakefield/' style='color:var(--gold);text-decoration:none'>Wakefield</a>
-              <a href='../services/ambient-lighting/doncaster/' style='color:var(--gold);text-decoration:none'>Doncaster</a>
-              <a href='../services/ambient-lighting/halifax/' style='color:var(--gold);text-decoration:none'>Halifax</a>
+              <span>Leeds</span>
+              <span>Bradford</span>
+              <span>Huddersfield</span>
+              <span>Sheffield</span>
+              <span>York</span>
+              <span>Wakefield</span>
+              <span>Doncaster</span>
+              <span>Halifax</span>
             </p>
+            <p style="margin-top:14px"><a href="../index.html#ambient-lighting" style="color:var(--gold)">View Ambient Lighting Installation</a></p>
           </div>
           <div class="form" style="padding:28px;margin-bottom:22px">
             <h3 style="margin-bottom:6px">&#10024; Starlight Headlining Installation</h3>
             <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">Workshop fitting at our Bingley workshop for customers in:</p>
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
-              <a href='../services/starlight-headlining/leeds/' style='color:var(--gold);text-decoration:none'>Leeds</a>
-              <a href='../services/starlight-headlining/sheffield/' style='color:var(--gold);text-decoration:none'>Sheffield</a>
-              <a href='../services/starlight-headlining/manchester/' style='color:var(--gold);text-decoration:none'>Manchester</a>
-              <a href='../services/starlight-headlining/york/' style='color:var(--gold);text-decoration:none'>York</a>
-              <a href='../services/starlight-headlining/bradford/' style='color:var(--gold);text-decoration:none'>Bradford</a>
-              <a href='../services/starlight-headlining/hull/' style='color:var(--gold);text-decoration:none'>Hull</a>
-              <a href='../services/starlight-headlining/harrogate/' style='color:var(--gold);text-decoration:none'>Harrogate</a>
-              <a href='../services/starlight-headlining/huddersfield/' style='color:var(--gold);text-decoration:none'>Huddersfield</a>
+              <span>Leeds</span>
+              <span>Sheffield</span>
+              <span>Manchester</span>
+              <span>York</span>
+              <span>Bradford</span>
+              <span>Hull</span>
+              <span>Harrogate</span>
+              <span>Huddersfield</span>
             </p>
+            <p style="margin-top:14px"><a href="../index.html#starlight-headlining" style="color:var(--gold)">View Starlight Headlining Installation</a></p>
           </div>
           <div class="form" style="padding:28px;margin-bottom:22px">
             <h3 style="margin-bottom:6px">&#128247; Reverse Camera Installation</h3>
             <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">Workshop fitting at our Bingley workshop for customers in:</p>
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
-              <a href='../services/reverse-camera-installation/bradford/' style='color:var(--gold);text-decoration:none'>Bradford</a>
-              <a href='../services/reverse-camera-installation/leeds/' style='color:var(--gold);text-decoration:none'>Leeds</a>
-              <a href='../services/reverse-camera-installation/halifax/' style='color:var(--gold);text-decoration:none'>Halifax</a>
-              <a href='../services/reverse-camera-installation/wakefield/' style='color:var(--gold);text-decoration:none'>Wakefield</a>
-              <a href='../services/reverse-camera-installation/barnsley/' style='color:var(--gold);text-decoration:none'>Barnsley</a>
-              <a href='../services/reverse-camera-installation/skipton/' style='color:var(--gold);text-decoration:none'>Skipton</a>
-              <a href='../services/reverse-camera-installation/rotherham/' style='color:var(--gold);text-decoration:none'>Rotherham</a>
-              <a href='../services/reverse-camera-installation/harrogate/' style='color:var(--gold);text-decoration:none'>Harrogate</a>
+              <span>Bradford</span>
+              <span>Leeds</span>
+              <span>Halifax</span>
+              <span>Wakefield</span>
+              <span>Barnsley</span>
+              <span>Skipton</span>
+              <span>Rotherham</span>
+              <span>Harrogate</span>
             </p>
+            <p style="margin-top:14px"><a href="../index.html#reverse-camera-installation" style="color:var(--gold)">View Reverse Camera Installation</a></p>
           </div>
           <div class="form" style="padding:28px;margin-bottom:22px">
             <h3 style="margin-bottom:6px">&#128249; Dashcam Installation</h3>
             <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">Workshop fitting at our Bingley workshop for customers in:</p>
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
-              <a href='../services/dashcam-installation/leeds/' style='color:var(--gold);text-decoration:none'>Leeds</a>
-              <a href='../services/dashcam-installation/bradford/' style='color:var(--gold);text-decoration:none'>Bradford</a>
-              <a href='../services/dashcam-installation/sheffield/' style='color:var(--gold);text-decoration:none'>Sheffield</a>
-              <a href='../services/dashcam-installation/york/' style='color:var(--gold);text-decoration:none'>York</a>
-              <a href='../services/dashcam-installation/hull/' style='color:var(--gold);text-decoration:none'>Hull</a>
-              <a href='../services/dashcam-installation/huddersfield/' style='color:var(--gold);text-decoration:none'>Huddersfield</a>
-              <a href='../services/dashcam-installation/doncaster/' style='color:var(--gold);text-decoration:none'>Doncaster</a>
-              <a href='../services/dashcam-installation/wakefield/' style='color:var(--gold);text-decoration:none'>Wakefield</a>
+              <span>Leeds</span>
+              <span>Bradford</span>
+              <span>Sheffield</span>
+              <span>York</span>
+              <span>Hull</span>
+              <span>Huddersfield</span>
+              <span>Doncaster</span>
+              <span>Wakefield</span>
             </p>
+            <p style="margin-top:14px"><a href="../index.html#dashcam-installation" style="color:var(--gold)">View Dashcam Installation</a></p>
           </div>
           <div class="form" style="padding:28px;margin-bottom:22px">
             <h3 style="margin-bottom:6px">&#128665; Steering Wheel Upgrades</h3>
             <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">Workshop fitting at our Bingley workshop for customers in:</p>
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
-              <a href='../services/steering-wheel-upgrade/leeds/' style='color:var(--gold);text-decoration:none'>Leeds</a>
-              <a href='../services/steering-wheel-upgrade/manchester/' style='color:var(--gold);text-decoration:none'>Manchester</a>
-              <a href='../services/steering-wheel-upgrade/sheffield/' style='color:var(--gold);text-decoration:none'>Sheffield</a>
-              <a href='../services/steering-wheel-upgrade/york/' style='color:var(--gold);text-decoration:none'>York</a>
-              <a href='../services/steering-wheel-upgrade/harrogate/' style='color:var(--gold);text-decoration:none'>Harrogate</a>
-              <a href='../services/steering-wheel-upgrade/bradford/' style='color:var(--gold);text-decoration:none'>Bradford</a>
-              <a href='../services/steering-wheel-upgrade/hull/' style='color:var(--gold);text-decoration:none'>Hull</a>
-              <a href='../services/steering-wheel-upgrade/huddersfield/' style='color:var(--gold);text-decoration:none'>Huddersfield</a>
+              <span>Leeds</span>
+              <span>Manchester</span>
+              <span>Sheffield</span>
+              <span>York</span>
+              <span>Harrogate</span>
+              <span>Bradford</span>
+              <span>Hull</span>
+              <span>Huddersfield</span>
             </p>
+            <p style="margin-top:14px"><a href="../index.html#steering-wheel-upgrade" style="color:var(--gold)">View Steering Wheel Upgrades</a></p>
           </div>
           <div class="form" style="padding:28px;margin-bottom:22px">
             <h3 style="margin-bottom:6px">&#128421;&#65039; Virtual Cockpit Installation</h3>
             <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">Workshop fitting at our Bingley workshop for customers in:</p>
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
-              <a href='../services/virtual-cockpit/leeds/' style='color:var(--gold);text-decoration:none'>Leeds</a>
-              <a href='../services/virtual-cockpit/sheffield/' style='color:var(--gold);text-decoration:none'>Sheffield</a>
-              <a href='../services/virtual-cockpit/manchester/' style='color:var(--gold);text-decoration:none'>Manchester</a>
-              <a href='../services/virtual-cockpit/york/' style='color:var(--gold);text-decoration:none'>York</a>
-              <a href='../services/virtual-cockpit/bradford/' style='color:var(--gold);text-decoration:none'>Bradford</a>
-              <a href='../services/virtual-cockpit/harrogate/' style='color:var(--gold);text-decoration:none'>Harrogate</a>
-              <a href='../services/virtual-cockpit/chesterfield/' style='color:var(--gold);text-decoration:none'>Chesterfield</a>
-              <a href='../services/virtual-cockpit/huddersfield/' style='color:var(--gold);text-decoration:none'>Huddersfield</a>
+              <span>Leeds</span>
+              <span>Sheffield</span>
+              <span>Manchester</span>
+              <span>York</span>
+              <span>Bradford</span>
+              <span>Harrogate</span>
+              <span>Chesterfield</span>
+              <span>Huddersfield</span>
             </p>
+            <p style="margin-top:14px"><a href="../index.html#virtual-cockpit" style="color:var(--gold)">View Virtual Cockpit Installation</a></p>
           </div>
           <div class="form" style="padding:28px;margin-bottom:22px">
             <h3 style="margin-bottom:6px">&#9889; Vehicle Coding and Retrofits</h3>
             <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:14px">Workshop fitting at our Bingley workshop for customers in:</p>
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
-              <a href='../services/coding-and-retrofits/bradford/' style='color:var(--gold);text-decoration:none'>Bradford</a>
-              <a href='../services/coding-and-retrofits/leeds/' style='color:var(--gold);text-decoration:none'>Leeds</a>
-              <a href='../services/coding-and-retrofits/huddersfield/' style='color:var(--gold);text-decoration:none'>Huddersfield</a>
-              <a href='../services/coding-and-retrofits/halifax/' style='color:var(--gold);text-decoration:none'>Halifax</a>
-              <a href='../services/coding-and-retrofits/wakefield/' style='color:var(--gold);text-decoration:none'>Wakefield</a>
-              <a href='../services/coding-and-retrofits/sheffield/' style='color:var(--gold);text-decoration:none'>Sheffield</a>
-              <a href='../services/coding-and-retrofits/skipton/' style='color:var(--gold);text-decoration:none'>Skipton</a>
-              <a href='../services/coding-and-retrofits/manchester/' style='color:var(--gold);text-decoration:none'>Manchester</a>
-              <a href='../services/coding-and-retrofits/york/' style='color:var(--gold);text-decoration:none'>York</a>
+              <span>Bradford</span>
+              <span>Leeds</span>
+              <span>Huddersfield</span>
+              <span>Halifax</span>
+              <span>Wakefield</span>
+              <span>Sheffield</span>
+              <span>Skipton</span>
+              <span>Manchester</span>
+              <span>York</span>
             </p>
+            <p style="margin-top:14px"><a href="../index.html#coding-and-retrofits" style="color:var(--gold)">View Vehicle Coding and Retrofits</a></p>
           </div>
   </section>
 
@@ -206,5 +215,6 @@
       <div class="footer-bottom">&copy; 2026 Yorkshire Autotech. All rights reserved. · <a href="../terms.html">Terms and Conditions</a></div>
     </div>
   </footer>
+  <script src="../js/main.js"></script>
 </body>
 </html>
