@@ -9,11 +9,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!backend.isLive) demoBanner.style.display = "block";
 
+  /* Must match the admin email in firestore.rules. */
+  const ADMIN_EMAIL = "yorkshireautotech@outlook.com";
+
   /* ----- Auth ----- */
   backend.onAdminAuth((user) => {
     const signedIn = !!user;
     loginBox.style.display = signedIn || !backend.isLive ? "none" : "block";
     dashboard.style.display = signedIn ? "block" : "none";
+    if (signedIn && backend.isLive) {
+      const email = (user.email || "").toLowerCase();
+      document.getElementById("signedInAs").textContent = `Signed in as ${user.email || "(no email)"}`;
+      const warn = document.getElementById("adminAccountWarning");
+      warn.textContent = email === ADMIN_EMAIL ? "" :
+        `This account isn't the admin account (${ADMIN_EMAIL}), so bookings can't be loaded or changed. Sign out and sign in with ${ADMIN_EMAIL}.`;
+      warn.classList.toggle("show", email !== ADMIN_EMAIL);
+    }
     if (signedIn) loadBookings();
   });
 
@@ -42,7 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const abDate = document.getElementById("abDate");
   const abSlot = document.getElementById("abSlot");
 
-  abDate.addEventListener("change", async () => {
+  abDate.addEventListener("change", loadSlots);
+
+  async function loadSlots() {
     abSlot.innerHTML = '<option value="">Loading…</option>';
     abSlot.disabled = true;
     if (!abDate.value) { abSlot.innerHTML = '<option value="">Pick a date first</option>'; return; }
@@ -54,6 +67,53 @@ document.addEventListener("DOMContentLoaded", () => {
       return `<option value="${s}" ${taken ? "disabled" : ""}>${backend.slotLabel(s)}${taken ? " — booked" : ""}</option>`;
     }).join("");
     abSlot.disabled = false;
+  }
+
+  /* ----- Paste from WhatsApp ----- */
+  document.getElementById("waFillBtn").addEventListener("click", async () => {
+    const out = document.getElementById("waPasteResult");
+    const found = window.parseWhatsAppText(document.getElementById("waPaste").value);
+    const filled = [];
+    const missing = [];
+    const set = (id, value, label) => {
+      const el = document.getElementById(id);
+      el.classList.remove("wa-filled");
+      if (value) {
+        el.value = value;
+        el.classList.add("wa-filled");
+        filled.push(label);
+      } else if (!el.value) {
+        missing.push(label);
+      }
+    };
+
+    set("abName", found.name, "name");
+    set("abPhone", found.phone, "phone");
+    set("abVehicle", found.vehicle, "vehicle");
+    set("abItems", found.service, "job");
+    set("abNotes", found.notes, "notes");
+
+    abDate.classList.remove("wa-filled");
+    abSlot.classList.remove("wa-filled");
+    if (found.date) {
+      abDate.value = found.date;
+      abDate.classList.add("wa-filled");
+      filled.push("date");
+      await loadSlots();
+      const option = found.time && abSlot.querySelector(`option[value="${found.time}"]:not([disabled])`);
+      if (option) {
+        abSlot.value = found.time;
+        abSlot.classList.add("wa-filled");
+        filled.push("time");
+      } else {
+        missing.push(found.time ? "time (that slot isn't free or isn't open that day)" : "time");
+      }
+    } else {
+      missing.push("date", "time");
+    }
+
+    out.textContent = (filled.length ? `Filled in: ${filled.join(", ")}. ` : "Couldn't find any details. ") +
+      (missing.length ? `Please add: ${missing.join(", ")}. ` : "") + "Check everything before adding the booking.";
   });
 
   document.getElementById("addBookingForm").addEventListener("submit", async (e) => {
@@ -74,12 +134,15 @@ document.addEventListener("DOMContentLoaded", () => {
         name: document.getElementById("abName").value.trim(),
         phone: document.getElementById("abPhone").value.trim(),
         email: "",
-        vehicle: "",
+        vehicle: document.getElementById("abVehicle").value.trim(),
         items: document.getElementById("abItems").value.trim() || "Added by admin",
         total: 0,
         notes: document.getElementById("abNotes").value.trim(),
       });
       e.target.reset();
+      document.querySelectorAll(".wa-filled").forEach((el) => el.classList.remove("wa-filled"));
+      document.getElementById("waPaste").value = "";
+      document.getElementById("waPasteResult").textContent = "";
       abSlot.innerHTML = '<option value="">Pick a date first</option>';
       abSlot.disabled = true;
       loadBookings();

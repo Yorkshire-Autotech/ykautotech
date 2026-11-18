@@ -18,18 +18,25 @@
   <meta property="og:description" content="Premium auto electrical specialists in Bingley — coding, retrofits, CarPlay, starlight headlining, cameras, dashcams and more. Dealer-level work, without the dealer price.">
   <meta property="og:url" content="https://yorkshireautotech.co.uk/">
   <meta property="og:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <meta property="og:image:width" content="1620">
+  <meta property="og:image:height" content="971">
+  <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:alt" content="Yorkshire Autotech — car coding, retrofits and in-car technology in Bingley">
   <meta property="og:locale" content="en_GB">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Yorkshire Autotech | Coding, Retrofits & In-Car Technology">
   <meta name="twitter:description" content="Premium auto electrical specialists in Bingley — dealer-level work, without the dealer price.">
   <meta name="twitter:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <meta name="twitter:image:alt" content="Yorkshire Autotech car coding, retrofits and in-car technology workshop in Bingley">
+  <link rel="alternate" hreflang="en-GB" href="https://yorkshireautotech.co.uk/">
+  <link rel="alternate" hreflang="x-default" href="https://yorkshireautotech.co.uk/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://res.cloudinary.com">
   <link rel="dns-prefetch" href="https://places.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preload" as="image" href="hero-image.jpg" fetchpriority="high">
   <link rel="icon" type="image/png" href="logo-640.png">
   <script type="application/ld+json">
   {
@@ -40,10 +47,24 @@
     "description": "Premium auto electrical specialists — coding & retrofits, ambient lighting, CarPlay & Android Auto, starlight headlining, reverse cameras, dashcams, steering wheel upgrades and virtual cockpits.",
     "url": "https://yorkshireautotech.co.uk/",
     "logo": "https://yorkshireautotech.co.uk/logo.png",
-    "image": "https://yorkshireautotech.co.uk/hero-image.jpg",
+    "image": {
+      "@type": "ImageObject",
+      "url": "https://yorkshireautotech.co.uk/hero-image.jpg",
+      "width": 1620,
+      "height": 971
+    },
     "telephone": "+44 7476 173159",
     "email": "bookings@yorkshireautotech.co.uk",
     "priceRange": "££",
+    "currenciesAccepted": "GBP",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+44 7476 173159",
+      "email": "bookings@yorkshireautotech.co.uk",
+      "contactType": "customer service",
+      "areaServed": "GB",
+      "availableLanguage": "English"
+    },
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Canal Road",
@@ -59,7 +80,6 @@
       { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "14:30", "closes": "18:00" },
       { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "09:00", "closes": "17:00" }
     ],
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": "38" },
     "areaServed": [
       { "@type": "AdministrativeArea", "name": "West Yorkshire" },
       { "@type": "AdministrativeArea", "name": "South Yorkshire" },
@@ -70,14 +90,14 @@
       "@type": "OfferCatalog",
       "name": "Auto Electrical Services",
       "itemListElement": [
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Coding & Retrofits" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ambient Lighting Installation" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Apple CarPlay & Android Auto Installation" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Starlight Headlining" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reverse Camera Installation" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dashcam Installation" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Steering Wheel Upgrades" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Virtual Cockpit Installation" } }
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Vehicle Coding and Retrofits", "description": "Dealer-level coding, feature activation and OEM+ vehicle retrofits.", "provider": { "@id": "https://yorkshireautotech.co.uk/#business" } } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ambient Lighting Installation", "description": "Professionally fitted, app-controlled ambient lighting for vehicle interiors.", "provider": { "@id": "https://yorkshireautotech.co.uk/#business" } } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Apple CarPlay and Android Auto Installation", "description": "Wired and wireless Apple CarPlay and Android Auto retrofit installation.", "provider": { "@id": "https://yorkshireautotech.co.uk/#business" } } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Starlight Headlining Installation", "description": "Fibre-optic starlight roof and headlining installation.", "provider": { "@id": "https://yorkshireautotech.co.uk/#business" } } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reverse Camera Installation", "description": "Factory-style reversing camera installation and infotainment integration.", "provider": { "@id": "https://yorkshireautotech.co.uk/#business" } } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dashcam Installation", "description": "Professional front and rear dashcam installation with hidden hardwiring.", "provider": { "@id": "https://yorkshireautotech.co.uk/#business" } } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Steering Wheel Upgrades", "description": "Custom steering wheel upgrades, retrims and safe airbag transfer.", "provider": { "@id": "https://yorkshireautotech.co.uk/#business" } } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Virtual Cockpit Installation", "description": "Digital instrument cluster supply, fitting and vehicle coding.", "provider": { "@id": "https://yorkshireautotech.co.uk/#business" } } }
       ]
     }
   }
@@ -90,7 +110,27 @@
     "name": "Yorkshire Autotech",
     "url": "https://yorkshireautotech.co.uk/",
     "inLanguage": "en-GB",
-    "publisher": { "@id": "https://yorkshireautotech.co.uk/#business" }
+    "publisher": { "@id": "https://yorkshireautotech.co.uk/#business" },
+    "about": { "@id": "https://yorkshireautotech.co.uk/#business" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://yorkshireautotech.co.uk/#webpage",
+    "url": "https://yorkshireautotech.co.uk/",
+    "name": "Yorkshire Autotech | Car Coding, Retrofits and In-Car Technology",
+    "description": "Dealer-level auto electrical work in Bingley, West Yorkshire, including coding and retrofits, CarPlay, ambient lighting and in-car technology.",
+    "inLanguage": "en-GB",
+    "isPartOf": { "@id": "https://yorkshireautotech.co.uk/#website" },
+    "about": { "@id": "https://yorkshireautotech.co.uk/#business" },
+    "primaryImageOfPage": {
+      "@type": "ImageObject",
+      "url": "https://yorkshireautotech.co.uk/hero-image.jpg",
+      "width": 1620,
+      "height": 971
+    }
   }
   </script>
 </head>
@@ -107,7 +147,6 @@
         <li><a href="index.html" class="active">Home</a></li>
         <li><a href="#services">Services</a></li>
         <li><a href="#about">Why Us</a></li>
-        <li><a href="fix-it-myself.html">Fit It Myself</a></li>
         <li><a href="gallery.html">Gallery</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -129,7 +168,6 @@
       <p class="hero-tagline">Dealer-level work, without the dealer price.</p>
       <div class="hero-cta">
         <a href="#services" class="btn btn-gold">Explore Services</a>
-        <a href="fix-it-myself.html" class="btn btn-outline">Fit It Myself</a>
       </div>
     </div>
     <a href="#services" class="hero-scroll">⌄</a>
@@ -320,7 +358,7 @@
         <div class="step reveal">
           <span class="step-num">02</span>
           <h3>Book Your Slot</h3>
-          <p>Choose a date that suits you. Buy parts from our shop, or let us supply everything for you.</p>
+          <p>Choose a date that suits you. We'll confirm the parts and equipment needed before your appointment.</p>
         </div>
         <div class="step reveal">
           <span class="step-num">03</span>
@@ -354,15 +392,6 @@
         <a href="https://search.google.com/local/reviews?placeid=ChIJqawxm4QHMUoRjHi_JlszAlg" target="_blank" rel="noopener" class="btn btn-outline btn-sm">See All Reviews on Google</a>
         <a href="https://search.google.com/local/writereview?placeid=ChIJqawxm4QHMUoRjHi_JlszAlg" target="_blank" rel="noopener" class="btn btn-gold btn-sm">Leave Us a Review</a>
       </div>
-    </div>
-  </section>
-
-  <!-- ===== CTA banner ===== -->
-  <section class="cta-banner">
-    <div class="container">
-      <h2>Prefer To Fit It Yourself?</h2>
-      <p>Head over to our shop — buy the products and fit them yourself, or add professional installation and let our team handle it at our workshop.</p>
-      <a href="/fix-it-myself.html" class="btn">Visit The Shop</a>
     </div>
   </section>
 
@@ -481,7 +510,6 @@
           <ul>
             <li><a href="#about">Why Us</a></li>
             <li><a href="areas/index.html">Areas We Cover</a></li>
-            <li><a href="/fix-it-myself.html">Shop</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="#contact">Book Now</a></li>
           </ul>

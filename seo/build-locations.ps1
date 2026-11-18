@@ -1,4 +1,4 @@
-﻿# Yorkshire Autotech - SEO location page generator
+# Yorkshire Autotech - SEO location page generator
 # Run from the site root:  powershell -ExecutionPolicy Bypass -File seo/build-locations.ps1
 # Generates static pages at /services/{service}/{location}/index.html,
 # an areas hub at /areas/index.html, and the planning matrix at seo/seo-plan.csv
@@ -184,8 +184,8 @@ $template = @'
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{TITLE}} | Yorkshire Autotech</title>
   <meta name="description" content="{{META}}">
-  <meta name="robots" content="index, follow, max-image-preview:large">
-  <link rel="canonical" href="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://yorkshireautotech.co.uk/">
   <meta name="geo.region" content="GB-ENG">
   <meta name="geo.placename" content="Bingley, West Yorkshire">
   <meta name="geo.position" content="53.8462;-1.8386">
@@ -205,6 +205,8 @@ $template = @'
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{BASE}}/css/style.css">
   <link rel="icon" type="image/png" href="{{BASE}}/logo-640.png">
+  <script src="{{BASE}}/js/seo-redirect.js"></script>
+  <meta http-equiv="refresh" content="0; url={{BASE}}/index.html">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -249,7 +251,6 @@ $template = @'
       <ul class="nav-links" id="navLinks">
         <li><a href="{{BASE}}/index.html">Home</a></li>
         <li><a href="{{BASE}}/index.html#services">Services</a></li>
-        <li><a href="https://shop.yorkshireautotech.co.uk">Shop</a></li>
         <li><a href="{{BASE}}/gallery.html">Gallery</a></li>
         <li><a href="{{BASE}}/areas/">Areas We Cover</a></li>
         <li><a href="{{BASE}}/index.html#contact">Contact</a></li>
@@ -348,7 +349,6 @@ $template = @'
           <ul>
             <li><a href="{{BASE}}/areas/">Areas We Cover</a></li>
             <li><a href="{{BASE}}/gallery.html">Gallery</a></li>
-            <li><a href="https://shop.yorkshireautotech.co.uk">Shop</a></li>
             <li><a href="{{BASE}}/index.html#contact">Contact</a></li>
           </ul>
         </div>
@@ -537,7 +537,6 @@ $hub = @'
       <ul class="nav-links">
         <li><a href="{{BASE}}/index.html">Home</a></li>
         <li><a href="{{BASE}}/index.html#services">Services</a></li>
-        <li><a href="https://shop.yorkshireautotech.co.uk">Shop</a></li>
         <li><a href="{{BASE}}/gallery.html">Gallery</a></li>
         <li><a href="{{BASE}}/areas/" class="active">Areas We Cover</a></li>
         <li><a href="{{BASE}}/index.html#contact">Contact</a></li>

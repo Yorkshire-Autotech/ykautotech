@@ -2,25 +2,30 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'yorkshireautotech@outlook.com';
+    }
+
     // Booking requests: anyone can submit one (must be "pending"),
-    // but only the signed-in admin can read or change them.
+    // the admin can add bookings directly, and only the admin can read/change them.
     match /bookings/{id} {
-      allow create: if request.resource.data.status == 'pending';
-      allow read, update, delete: if request.auth != null;
+      allow create: if request.resource.data.status == 'pending' || isAdmin();
+      allow read, update, delete: if isAdmin();
     }
 
     // Quote enquiries from the contact form: anyone can submit one
     // (must be "new"), but they are hidden — only the admin can read/change them.
     match /enquiries/{id} {
       allow create: if request.resource.data.status == 'new';
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if isAdmin();
     }
 
     // Confirmed-slot markers: publicly readable (no personal data)
     // so the website can grey out taken slots; only admin can write.
     match /availability/{id} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
   }
 }
