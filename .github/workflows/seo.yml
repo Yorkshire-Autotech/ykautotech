@@ -1,0 +1,25 @@
+name: SEO checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  seo:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate and validate SEO files
+        shell: pwsh
+        run: |
+          .\seo\build-locations.ps1
+          .\seo\test-seo.ps1
+      - name: Ensure generated files are current
+        shell: pwsh
+        run: |
+          if (git status --porcelain) {
+            git --no-pager diff
+            throw "SEO-generated files changed. Run the generators and commit the result."
+          }

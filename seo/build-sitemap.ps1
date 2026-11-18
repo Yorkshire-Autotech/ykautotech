@@ -38,6 +38,10 @@ if ((Test-Path $hub) -and (Test-Indexable $hub)) {
 $servicesDir = Join-Path $root "services"
 Get-ChildItem -Path $servicesDir -Directory | Sort-Object Name | ForEach-Object {
   $svc = $_.Name
+  $servicePage = Join-Path $_.FullName "index.html"
+  if ((Test-Path $servicePage) -and (Test-Indexable $servicePage)) {
+    $urls.Add((New-UrlEntry "$site/services/$svc/"))
+  }
   Get-ChildItem -Path $_.FullName -Directory | Sort-Object Name | ForEach-Object {
     $page = Join-Path $_.FullName "index.html"
     if ((Test-Path $page) -and (Test-Indexable $page)) {

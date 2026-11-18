@@ -185,7 +185,7 @@ $template = @'
   <title>{{TITLE}} | Yorkshire Autotech</title>
   <meta name="description" content="{{META}}">
   <meta name="robots" content="noindex, follow">
-  <link rel="canonical" href="https://yorkshireautotech.co.uk/">
+  <link rel="canonical" href="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/">
   <meta name="geo.region" content="GB-ENG">
   <meta name="geo.placename" content="Bingley, West Yorkshire">
   <meta name="geo.position" content="53.8462;-1.8386">
@@ -206,7 +206,7 @@ $template = @'
   <link rel="stylesheet" href="{{BASE}}/css/style.css">
   <link rel="icon" type="image/png" href="{{BASE}}/logo-640.png">
   <script src="{{BASE}}/js/seo-redirect.js"></script>
-  <meta http-equiv="refresh" content="0; url={{BASE}}/index.html">
+  <meta http-equiv="refresh" content="0; url={{BASE}}/services/{{SERVICE_SLUG}}/">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -234,7 +234,7 @@ $template = @'
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yorkshireautotech.co.uk/" },
-      { "@type": "ListItem", "position": 2, "name": "Areas We Cover", "item": "https://yorkshireautotech.co.uk/areas/" },
+      { "@type": "ListItem", "position": 2, "name": "{{SERVICE_NAME}}", "item": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/" },
       { "@type": "ListItem", "position": 3, "name": "{{SERVICE_NAME}} in {{LOCATION_NAME}}", "item": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/{{LOCATION_SLUG}}/" }
     ]
   }
@@ -370,6 +370,196 @@ $template = @'
 </html>
 '@
 
+$serviceTemplate = @'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{SERVICE_NAME}} in Bingley | Yorkshire Autotech</title>
+  <meta name="description" content="{{META}}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Yorkshire Autotech">
+  <meta property="og:title" content="{{SERVICE_NAME}} in Bingley | Yorkshire Autotech">
+  <meta property="og:description" content="{{SERVICE_DESC}}">
+  <meta property="og:url" content="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/">
+  <meta property="og:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <meta property="og:image:width" content="1620">
+  <meta property="og:image:height" content="971">
+  <meta property="og:image:alt" content="{{SERVICE_NAME}} by Yorkshire Autotech in Bingley">
+  <meta property="og:locale" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{SERVICE_NAME}} in Bingley | Yorkshire Autotech">
+  <meta name="twitter:description" content="{{SERVICE_DESC}}">
+  <meta name="twitter:image" content="https://yorkshireautotech.co.uk/hero-image.jpg">
+  <link rel="alternate" hreflang="en-GB" href="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/">
+  <link rel="alternate" hreflang="x-default" href="https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="icon" type="image/png" href="../../logo-640.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/#service",
+    "name": "{{SERVICE_NAME}}",
+    "serviceType": "{{SERVICE_NAME}}",
+    "description": "{{SERVICE_DESC}}",
+    "url": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/",
+    "image": "https://yorkshireautotech.co.uk/hero-image.jpg",
+    "provider": { "@id": "https://yorkshireautotech.co.uk/#business" },
+    "areaServed": [
+      { "@type": "AdministrativeArea", "name": "West Yorkshire" },
+      { "@type": "AdministrativeArea", "name": "South Yorkshire" },
+      { "@type": "AdministrativeArea", "name": "North Yorkshire" },
+      { "@type": "AdministrativeArea", "name": "East Yorkshire" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yorkshireautotech.co.uk/" },
+      { "@type": "ListItem", "position": 2, "name": "{{SERVICE_NAME}}", "item": "https://yorkshireautotech.co.uk/services/{{SERVICE_SLUG}}/" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Will {{SERVICE_LOWER}} work with my vehicle?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Compatibility depends on the make, model, year and factory equipment fitted to your vehicle. Send Yorkshire Autotech your registration or full vehicle details and we will confirm the suitable options before you book." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I get a quote for {{SERVICE_LOWER}}?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Contact Yorkshire Autotech with your vehicle details and the result you want. We will confirm compatibility, the available options and a quote before any work starts." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where is {{SERVICE_LOWER}} carried out?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Our workshop is on Canal Road in Bingley, West Yorkshire, BD16 2SR. Please arrange an appointment before travelling. {{MOBILE_STATEMENT}}" }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header scrolled" id="siteHeader">
+    <nav class="nav container">
+      <a href="../../index.html" class="logo">
+        <img src="../../logo-640.png" alt="Yorkshire Autotech" width="102" height="68">
+        <span class="logo-text">Yorkshire <span class="gold-text">Autotech</span><span class="logo-sub">Auto Electrics</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../../index.html">Home</a></li>
+        <li><a href="../../index.html#services">Services</a></li>
+        <li><a href="../../gallery.html">Gallery</a></li>
+        <li><a href="../../areas/">Areas We Cover</a></li>
+        <li><a href="../../index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="../../index.html#contact" class="btn btn-gold btn-sm nav-cta">Get a Quote</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">Specialist Vehicle Upgrades in Bingley</span>
+        <h1>{{SERVICE_NAME}}</h1>
+        <p>{{SERVICE_DESC}}</p>
+        <div class="hero-cta" style="margin-top:30px">
+          <a href="../../index.html#contact" class="btn btn-gold">Request a Quote</a>
+          <a href="../../gallery.html" class="btn btn-outline">See Our Work</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:70px">
+      <div class="container">
+        <div class="contact-grid" style="align-items:start">
+          <div class="contact-info">
+            <span class="eyebrow">A Properly Planned Installation</span>
+            <h2>{{SERVICE_NAME}} in Bingley</h2>
+            <p>Every vehicle is different. We first check your make, model, year and existing equipment, then explain the suitable options and quote before any work begins.</p>
+            <p>For this service, {{MOBILE_STATEMENT}}</p>
+            <div class="contact-detail"><span class="cd-icon">&#128205;</span><div><strong>Workshop</strong><span>Canal Road, Bingley, BD16 2SR</span></div></div>
+            <div class="contact-detail"><span class="cd-icon">&#128172;</span><div><strong>Appointments</strong><span>Please book before travelling to the workshop</span></div></div>
+          </div>
+          <div class="form" style="padding:34px">
+            <h2 style="font-size:1.4rem;margin-bottom:16px">What the Service Includes</h2>
+            <ul style="display:grid;gap:12px;margin-bottom:26px">{{INCLUDES}}</ul>
+            <p style="font-size:0.9rem;color:var(--text-muted)">{{COMPAT_NOTE}}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Why Yorkshire Autotech</span>
+          <h2>Specialist Work, <span class="gold-text">Carefully Checked</span></h2>
+          <p>{{SERVICE_ANGLE}}</p>
+        </div>
+        <div class="why-grid">
+          <div class="why-item"><div class="why-icon">&#128736;&#65039;</div><h3>Vehicle-specific advice</h3><p>We confirm the right equipment and integration before committing to an installation.</p></div>
+          <div class="why-item"><div class="why-icon">&#128269;</div><h3>Full checks</h3><p>Functions are tested and demonstrated before collection.</p></div>
+          <div class="why-item"><div class="why-icon">&#128183;</div><h3>Clear quote</h3><p>You will know the proposed work and price before the job starts.</p></div>
+          <div class="why-item"><div class="why-icon">&#128248;</div><h3>Real examples</h3><p>Browse recent jobs in our <a href="../../gallery.html" style="color:var(--gold)">installation gallery</a>.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container" style="max-width:820px">
+        <div class="section-head">
+          <span class="eyebrow">Frequently Asked Questions</span>
+          <h2>Before You <span class="gold-text">Book</span></h2>
+        </div>
+        <div class="form">
+          <h3>Will {{SERVICE_LOWER}} work with my vehicle?</h3>
+          <p>Compatibility depends on the make, model, year and factory equipment fitted. Send us your registration or full vehicle details and we will confirm the suitable options.</p>
+          <h3 style="margin-top:28px">How do I get a quote?</h3>
+          <p>Tell us your vehicle and the result you want. We will confirm compatibility, options and price before any work starts.</p>
+          <h3 style="margin-top:28px">Can the work be carried out at my location?</h3>
+          <p>{{MOBILE_STATEMENT}}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-banner">
+      <div class="container">
+        <h2>Planning {{SERVICE_NAME}}?</h2>
+        <p>Send your vehicle details and location. We will advise on compatibility, availability and the next step.</p>
+        <a href="../../index.html#contact" class="btn">Contact Yorkshire Autotech</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">&copy; {{YEAR}} Yorkshire Autotech. All rights reserved. · <a href="../../privacy.html">Privacy</a> · <a href="../../terms.html">Terms and Conditions</a></div>
+    </div>
+  </footer>
+  <script src="../../js/main.js"></script>
+</body>
+</html>
+'@
+
 # ============================ BUILD ============================
 $locBySlug = @{}
 foreach ($l in $locations) { $locBySlug[$l.slug] = $l }
@@ -456,6 +646,38 @@ foreach ($svc in $services) {
   }
 }
 
+# Build one canonical, indexable landing page for each service.
+foreach ($svc in $services) {
+  $includes = ($svc.includes | ForEach-Object { "<li style='font-size:0.95rem'><span style='color:var(--gold);margin-right:8px'>&#9670;</span>$_</li>" }) -join "`n            "
+  $compatNote = if ($svc.compat) {
+    "Compatibility depends on your exact vehicle and head unit. Include the make, model and year in your enquiry and we will confirm what is possible before you book."
+  } else {
+    "Available options depend on your exact vehicle. Include the make, model and year in your enquiry and we will confirm the best fit."
+  }
+  $mobileStatement = if ($svc.mobile) {
+    "mobile fitting may be available for this service depending on your vehicle and location; ask when you enquire."
+  } else {
+    "this service is workshop-only because it requires our specialist equipment and space."
+  }
+
+  $html = $serviceTemplate
+  $meta = "Professional $($svc.kw) in Bingley, West Yorkshire by Yorkshire Autotech. Contact us to confirm compatibility, options and a quote."
+  $html = $html.Replace("{{SERVICE_NAME}}", $svc.name)
+  $html = $html.Replace("{{SERVICE_SLUG}}", $svc.slug)
+  $html = $html.Replace("{{SERVICE_DESC}}", $svc.desc)
+  $html = $html.Replace("{{SERVICE_LOWER}}", $svc.name.ToLower())
+  $html = $html.Replace("{{SERVICE_ANGLE}}", $svc.angle)
+  $html = $html.Replace("{{META}}", $meta)
+  $html = $html.Replace("{{INCLUDES}}", $includes)
+  $html = $html.Replace("{{COMPAT_NOTE}}", $compatNote)
+  $html = $html.Replace("{{MOBILE_STATEMENT}}", $mobileStatement)
+  $html = $html.Replace("{{YEAR}}", (Get-Date).Year.ToString())
+
+  $serviceDir = Join-Path $root "services\$($svc.slug)"
+  New-Item -ItemType Directory -Force -Path $serviceDir | Out-Null
+  Set-Content -Path (Join-Path $serviceDir "index.html") -Value $html -NoNewline -Encoding UTF8
+}
+
 # Log tier-3 locations as planned (not built)
 $usedSlugs = @{}
 foreach ($k in $matrix.Keys) { foreach ($s in $matrix[$k]) { $usedSlugs[$s] = $true } }
@@ -491,7 +713,7 @@ $hubSections = ($services | ForEach-Object {
             <p style="display:flex;flex-wrap:wrap;gap:8px 18px">
               $links
             </p>
-            <p style="margin-top:14px"><a href="../index.html#$($svc.slug)" style="color:var(--gold)">View $($svc.name)</a></p>
+            <p style="margin-top:14px"><a href="../services/$($svc.slug)/" style="color:var(--gold)">View $($svc.name)</a></p>
           </div>
 "@
 }) -join "`n"

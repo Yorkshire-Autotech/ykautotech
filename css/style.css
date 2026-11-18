@@ -304,6 +304,8 @@ ul { list-style: none; }
   margin-bottom: 22px;
 }
 .service-card h3 { font-size: 1.18rem; margin-bottom: 12px; }
+.service-card h3 a { color: inherit; text-decoration: none; }
+.service-card h3 a:hover { color: var(--gold-light); }
 .service-card p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 26px; }
 .service-price { display: block; font-family: "Cinzel", serif; font-size: 1.05rem; font-weight: 700; color: var(--gold); margin: -14px 0 22px; }
 .service-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
