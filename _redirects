@@ -1,11 +1,3 @@
-/apple-carplay-* / 302
-/car-coding-* / 302
-/ambient-lighting-* / 302
-/starlight-headlining-* / 302
-/reverse-camera-* / 302
-/dashcam-* / 302
-/steering-wheel-* / 302
-/virtual-cockpit-* / 302
-/component-protection-* / 302
-/vag-specialist-* / 302
-/car-diagnostics-* / 302
+# Legacy SEO slugs can use several old service/location formats. Redirect any
+# root-level hyphenated slug before Cloudflare's homepage fallback serves it.
+/*-* / 302
