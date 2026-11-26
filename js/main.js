@@ -368,6 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="form-group" id="brPackageGroup" hidden>
             <label for="brPackage">Package *</label>
             <select id="brPackage"><option value="">Select a package</option></select>
+            <span class="booking-small" id="brPackageDisclaimer">Factory kit is included with all listed packages.</span>
           </div>
           <div class="booking-duration-note">
             <span>Reserved in the calendar: <strong id="brSlotDuration"></strong></span>
@@ -488,11 +489,13 @@ document.addEventListener("DOMContentLoaded", () => {
           "Bronze — Footwells",
           "Silver — Doors, dashboard & footwells",
           "Gold — Doors, dashboard, handles, storage & footwells",
+          "Bespoke — Custom configuration; factory kit included",
         ],
         "starlight-headlining": [
           "Bronze — 600 stars, static colour, app controlled",
           "Silver — 800 stars, meteor effect, colours, remote & app controlled",
           "Gold — 1,200 stars, meteor effect, colours, remote & app controlled",
+          "Bespoke — Custom star count and layout; factory kit included",
         ],
       };
       const choices = packages[state.service.id] || [];
@@ -1059,11 +1062,13 @@ const SERVICE_PRODUCTS = {
   "ambient-lighting-bronze": { name: "64-Colour Ambient Lighting — Bronze", fitted: 60 },
   "ambient-lighting-silver": { name: "64-Colour Ambient Lighting — Silver", fitted: 200 },
   "ambient-lighting-gold": { name: "64-Colour Ambient Lighting — Gold", fitted: 250 },
+  "ambient-lighting-bespoke": { name: "64-Colour Ambient Lighting — Bespoke", fitted: 0 },
   "carplay-retrofit": { name: "Wireless CarPlay & Android Auto Retrofit", fitted: 60 },
   "starlight": { name: "Starlight Headliner Kit", fitted: 598 },
   "starlight-bronze": { name: "Starlight Headlining — Bronze Package", fitted: 350 },
   "starlight-silver": { name: "Starlight Headlining — Silver Package", fitted: 500 },
   "starlight-gold": { name: "Starlight Headlining — Gold Package", fitted: 600 },
+  "starlight-bespoke": { name: "Starlight Headlining — Bespoke Package", fitted: 0 },
   "reverse-camera": { name: "OEM-Style Reverse Camera Kit", fitted: 100 },
   "dashcam-4k": { name: "4K Front & Rear Dashcam", fitted: 60 },
   "steering-wheel": { name: "Custom Carbon Fibre Steering Wheel", fitted: 100 },
