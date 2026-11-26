@@ -315,7 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fallbackServices = [
       { id: "diagnostics-coding", name: "Diagnostics & Coding", slotMinutes: 60, jobMinutes: 60, fittingOnly: true, supplyAndFit: true },
       { id: "carplay", name: "CarPlay / Android Auto", slotMinutes: 60, jobMinutes: 60, fittingOnly: true, supplyAndFit: true },
-      { id: "ambient-lighting", name: "Ambient Lighting", slotMinutes: 60, jobMinutes: 240, fittingOnly: true, supplyAndFit: true },
+      { id: "ambient-lighting", name: "Ambient Lighting", slotMinutes: 60, jobMinutes: 240, fittingOnly: false, supplyAndFit: true },
       { id: "starlight-headlining", name: "Starlight Headliner", slotMinutes: 120, jobMinutes: 480, fittingOnly: true, supplyAndFit: true },
       { id: "reverse-camera", name: "Reverse Camera", slotMinutes: 120, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
       { id: "dashcam", name: "Dashcam Installation", slotMinutes: 120, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
@@ -512,8 +512,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const supplied = form.querySelector('input[value="supply-and-fit"]');
       fitting.disabled = !state.service.fittingOnly;
       supplied.disabled = !state.service.supplyAndFit;
-      if (!fitting.disabled) fitting.checked = true;
-      else supplied.checked = true;
+      fitting.checked = !fitting.disabled;
+      supplied.checked = fitting.disabled && !supplied.disabled;
       updateBookingType();
     }
     function updateBookingType() {

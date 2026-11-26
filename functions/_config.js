@@ -3,7 +3,7 @@ import { getDocumentIfExists, putDocument } from "./_lib.js";
 export const DEFAULT_SERVICES = [
   { id: "diagnostics-coding", name: "Diagnostics & Coding", slotMinutes: 60, jobMinutes: 60, fittingOnly: true, supplyAndFit: true },
   { id: "carplay", name: "CarPlay / Android Auto", slotMinutes: 60, jobMinutes: 60, fittingOnly: true, supplyAndFit: true },
-  { id: "ambient-lighting", name: "Ambient Lighting", slotMinutes: 60, jobMinutes: 240, fittingOnly: true, supplyAndFit: true },
+  { id: "ambient-lighting", name: "Ambient Lighting", slotMinutes: 60, jobMinutes: 240, fittingOnly: false, supplyAndFit: true },
   { id: "starlight-headlining", name: "Starlight Headliner", slotMinutes: 120, jobMinutes: 480, fittingOnly: true, supplyAndFit: true },
   { id: "reverse-camera", name: "Reverse Camera", slotMinutes: 120, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
   { id: "dashcam", name: "Dashcam Installation", slotMinutes: 120, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
@@ -36,10 +36,15 @@ export const DEFAULT_CONFIG = {
 
 export async function bookingConfig(env) {
   const stored = await getDocumentIfExists(env, "settings/bookingConfig");
+  const services = (stored?.services?.length ? stored.services : DEFAULT_SERVICES).map((service) =>
+    service.id === "ambient-lighting"
+      ? { ...service, fittingOnly: false, supplyAndFit: true }
+      : service
+  );
   return {
     ...DEFAULT_CONFIG,
     ...(stored || {}),
-    services: stored?.services?.length ? stored.services : DEFAULT_SERVICES,
+    services,
     workingHours: { ...DEFAULT_CONFIG.workingHours, ...(stored?.workingHours || {}) },
   };
 }
