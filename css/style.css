@@ -673,7 +673,7 @@ button.cal-cell:hover { border-color: var(--gold); }
 
 #slotModal { width: min(680px, 94vw); }
 
-.booking-progress { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; margin: 0 0 20px; }
+.booking-progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin: 0 0 20px; }
 .booking-progress span { height: 4px; border-radius: 99px; background: var(--border); }
 .booking-progress span.active { background: var(--gold); }
 .booking-step[hidden] { display: none; }

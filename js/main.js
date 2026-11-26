@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeCart();
     slotContent.innerHTML = `
       <div class="booking-progress" aria-label="Booking progress"></div>
-      <span class="eyebrow" id="bookingStepLabel">Step 1 of 6</span>
+      <span class="eyebrow" id="bookingStepLabel">Step 1 of 4</span>
       <h3>Book Your <span class="gold-text">Workshop Visit</span></h3>
       <p class="modal-sub" id="bookingStepIntro">Select the service you need.</p>
       <form id="bookingRequestForm" class="form" style="padding:0;background:none;border:none">
@@ -369,8 +369,6 @@ document.addEventListener("DOMContentLoaded", () => {
             <span>Reserved in the calendar: <strong id="brSlotDuration"></strong></span>
             <span>Estimated work duration: <strong id="brJobDuration"></strong></span>
           </div>
-        </section>
-        <section class="booking-step" data-step="2" hidden>
           <div class="booking-type-grid">
             <label class="booking-type-card">
               <input type="radio" name="bookingType" value="fitting-only" checked>
@@ -393,7 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <p class="booking-small" id="brPhotoStatus">Up to six JPG, PNG or WebP images, 8 MB each.</p>
         </section>
-        <section class="booking-step" data-step="3" hidden>
+        <section class="booking-step" data-step="2" hidden>
           <div class="form-group">
             <label>Your Vehicle *</label>
             <div class="vehicle-row">
@@ -408,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="form-group"><label for="brAdditional">Additional information</label><textarea id="brAdditional" placeholder="Tell us about modifications, warning lights or compatibility questions"></textarea></div>
         </section>
-        <section class="booking-step" data-step="4" hidden>
+        <section class="booking-step" data-step="3" hidden>
           <div class="form-row">
             <div class="form-group"><label for="brName">Full Name *</label><input type="text" id="brName" required autocomplete="name"></div>
             <div class="form-group"><label for="brPhone">Telephone *</label><input type="tel" id="brPhone" required autocomplete="tel" placeholder="07..."></div>
@@ -420,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="form-group" id="brAddressGroup" hidden><label for="brAddress">Mobile fitting address *</label><input type="text" id="brAddress" autocomplete="street-address"></div>
         </section>
-        <section class="booking-step" data-step="5" hidden>
+        <section class="booking-step" data-step="4" hidden>
           <div class="form-group">
             <label>Appointment date *</label>
             <input type="date" id="brDate" min="" max="" required>
@@ -432,8 +430,6 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="slot-grid" id="brSlots"><span class="slot-hint">Pick a date to check live availability.</span></div>
             <span class="date-error" id="brSlotError">Please choose an available time.</span>
           </div>
-        </section>
-        <section class="booking-step" data-step="6" hidden>
           <div class="booking-review" id="bookingReview"></div>
           <label class="booking-consent"><input type="checkbox" id="brConsent" required> I agree that these details may be used to arrange and manage this appointment.</label>
           <p class="form-error" id="bookingSubmitError" role="alert"></p>
@@ -511,7 +507,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ? Number(config.supplyAndFitLeadHours ?? 168)
         : Number(config.bookingLeadHours ?? 24);
       dateInput.min = toYMD(new Date(Date.now() + leadHours * 3600000));
-      const hint = slotContent.querySelector('[data-step="5"] .date-hint');
+      const hint = slotContent.querySelector('[data-step="4"] .date-hint');
       hint.textContent = state.bookingType === "supply-and-fit"
         ? "Supply & Fit appointments require at least seven days' notice."
         : "Fitting Only appointments require at least 24 hours' notice.";
@@ -594,27 +590,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const intros = [
-      "Select the service you need.",
-      "Choose who supplies the parts and tell us about them.",
+      "Choose the service, booking type and part details.",
       "Tell us about your vehicle.",
-      "Tell us how to contact you and where the work will happen.",
-      "Choose a live appointment slot.",
-      "Check the details before submitting.",
+      "Add your contact and fitting-location details.",
+      "Choose an appointment and confirm your booking.",
     ];
     function renderStep() {
       form.querySelectorAll(".booking-step").forEach((section) => {
         section.hidden = Number(section.dataset.step) !== state.step;
       });
-      slotContent.querySelector("#bookingStepLabel").textContent = `Step ${state.step} of 6`;
+      slotContent.querySelector("#bookingStepLabel").textContent = `Step ${state.step} of 4`;
       slotContent.querySelector("#bookingStepIntro").textContent = intros[state.step - 1];
-      slotContent.querySelector(".booking-progress").innerHTML = Array.from({ length: 6 }, (_, index) =>
+      slotContent.querySelector(".booking-progress").innerHTML = Array.from({ length: 4 }, (_, index) =>
         `<span class="${index + 1 <= state.step ? "active" : ""}"></span>`
       ).join("");
       backBtn.hidden = state.step === 1;
-      nextBtn.textContent = state.step === 6
+      nextBtn.textContent = state.step === 4
         ? (state.bookingType === "supply-and-fit" || state.service.approvalRequired ? "Submit for Approval" : "Confirm Booking")
         : "Continue";
-      if (state.step === 6) renderReview();
+      if (state.step === 4) renderReview();
     }
 
     function durationLabel(minutes) {
@@ -647,7 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return false;
         }
       }
-      if (state.step === 5 && (!state.date || !state.slot)) {
+      if (state.step === 4 && (!state.date || !state.slot)) {
         slotContent.querySelector(state.date ? "#brSlotError" : "#brDateError").classList.add("show");
         return false;
       }
@@ -723,8 +717,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!validateStep()) return;
       nextBtn.disabled = true;
       try {
-        if (state.step === 2 && slotContent.querySelector("#brPhotos").files.length) await uploadPhotos();
-        if (state.step === 6) {
+        if (state.step === 1 && slotContent.querySelector("#brPhotos").files.length) await uploadPhotos();
+        if (state.step === 4) {
           await submit();
           return;
         }
@@ -733,7 +727,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         showToast(`⚠ ${error.message}`);
       } finally {
-        if (state.step !== 6 || slotContent.querySelector("#bookingSubmitError")) nextBtn.disabled = false;
+        if (state.step !== 4 || slotContent.querySelector("#bookingSubmitError")) nextBtn.disabled = false;
       }
     });
     backBtn.addEventListener("click", () => {
