@@ -26,6 +26,10 @@ export function validateBooking(input, config) {
   }
   const service = serviceById(config, String(input.serviceId || ""));
   if (!service) throw new HttpError(400, "Please choose a valid service.", "invalid_service");
+  const packageName = String(input.package || "").trim().slice(0, 200);
+  if (["ambient-lighting", "starlight-headlining"].includes(service.id) && !packageName) {
+    throw new HttpError(400, "Please choose a package for this service.", "package_required");
+  }
   const bookingType = String(input.bookingType || "fitting-only");
   const supports =
     bookingType === "fitting-only"
@@ -60,6 +64,7 @@ export function validateBooking(input, config) {
     serviceId: service.id,
     service: service.name,
     items: service.name,
+    package: packageName,
     bookingType,
     bookingSlotDuration: Number(service.slotMinutes),
     estimatedJobDuration: Number(service.jobMinutes),

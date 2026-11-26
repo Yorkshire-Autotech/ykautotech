@@ -233,6 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ${b.email ? `<span>✉️ ${esc(b.email)}</span>` : ""}
           ${b.vehicle ? `<span>🚗 ${esc(b.vehicle)}</span>` : ""}
           <span>🛠 ${esc(b.items || b.service)}${Number(b.total) > 0 ? ` — £${Number(b.total).toLocaleString("en-GB")}` : ""}</span>
+          ${b.package ? `<span>Package: <strong>${esc(b.package)}</strong></span>` : ""}
           <span>Type: <strong>${esc(b.bookingType === "supply-and-fit" ? "Supply & Fit" : "Fitting Only")}</strong></span>
           <span>Reserved: <strong>${Number(b.bookingSlotDuration || 60)} minutes</strong></span>
           <span>Estimated work: <strong>${Number(b.estimatedJobDuration || b.bookingSlotDuration || 60)} minutes</strong></span>

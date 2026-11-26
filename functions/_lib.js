@@ -439,6 +439,7 @@ export function calendarEvent(booking, env) {
       `Vehicle: ${vehicle}`,
       `Registration: ${booking.registration || "Not supplied"}`,
       `Service: ${booking.items || booking.service}`,
+      `Package: ${booking.package || "Not applicable"}`,
       `Booking type: ${booking.bookingType || "Workshop booking"}`,
       `Estimated fitting duration: ${booking.estimatedJobDuration || duration} minutes`,
       `Customer notes: ${booking.notes || "None"}`,

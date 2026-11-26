@@ -207,15 +207,15 @@ document.addEventListener("DOMContentLoaded", () => {
       addServiceToBasket(`ambient-lighting-${tier}`, `64-Colour Ambient Lighting — ${tierName}`);
       closeAmbientOptions();
     });
-    document.getElementById("closeStarlightOptions")?.addEventListener("click", closeStarlightOptions);
-    starlightOverlay?.addEventListener("click", closeStarlightOptions);
-    document.querySelectorAll("[data-starlight-option]").forEach((option) => {
-      option.addEventListener("click", () => {
-        const tier = option.dataset.starlightOption;
-        const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
-        addServiceToBasket(`starlight-${tier}`, `Starlight Headlining — ${tierName} Package`);
-        closeStarlightOptions();
-      });
+  });
+  document.getElementById("closeStarlightOptions")?.addEventListener("click", closeStarlightOptions);
+  starlightOverlay?.addEventListener("click", closeStarlightOptions);
+  document.querySelectorAll("[data-starlight-option]").forEach((option) => {
+    option.addEventListener("click", () => {
+      const tier = option.dataset.starlightOption;
+      const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+      addServiceToBasket(`starlight-${tier}`, `Starlight Headlining — ${tierName} Package`);
+      closeStarlightOptions();
     });
   });
 
@@ -365,6 +365,10 @@ document.addEventListener("DOMContentLoaded", () => {
               ${config.services.map((service) => `<option value="${escapeHtml(service.id)}" ${service.id === state.service.id ? "selected" : ""}>${escapeHtml(service.name)}</option>`).join("")}
             </select>
           </div>
+          <div class="form-group" id="brPackageGroup" hidden>
+            <label for="brPackage">Package *</label>
+            <select id="brPackage"><option value="">Select a package</option></select>
+          </div>
           <div class="booking-duration-note">
             <span>Reserved in the calendar: <strong id="brSlotDuration"></strong></span>
             <span>Estimated work duration: <strong id="brJobDuration"></strong></span>
@@ -444,6 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextBtn = slotContent.querySelector("#bookingNext");
     const backBtn = slotContent.querySelector("#bookingBack");
     const serviceSelect = slotContent.querySelector("#brService");
+    const packageSelect = slotContent.querySelector("#brPackage");
     const slotGrid = slotContent.querySelector("#brSlots");
     const dateInput = slotContent.querySelector("#brDate");
     const makeSel = slotContent.querySelector("#bkMake");
@@ -478,6 +483,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateService() {
       state.service = config.services.find((service) => service.id === serviceSelect.value);
+      const packages = {
+        "ambient-lighting": [
+          "Bronze — Footwells",
+          "Silver — Doors, dashboard & footwells",
+          "Gold — Doors, dashboard, handles, storage & footwells",
+        ],
+        "starlight-headlining": [
+          "Bronze — 600 stars, static colour, app controlled",
+          "Silver — 800 stars, meteor effect, colours, remote & app controlled",
+          "Gold — 1,200 stars, meteor effect, colours, remote & app controlled",
+        ],
+      };
+      const choices = packages[state.service.id] || [];
+      const previous = packageSelect.value;
+      packageSelect.innerHTML = '<option value="">Select a package</option>' +
+        choices.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
+      slotContent.querySelector("#brPackageGroup").hidden = choices.length === 0;
+      packageSelect.required = choices.length > 0;
+      const basketPackage = choices.find((name) => lowerCartName.includes(name.split(" — ")[0].toLowerCase()));
+      packageSelect.value = choices.includes(previous) ? previous : (basketPackage || "");
       slotContent.querySelector("#brSlotDuration").textContent = `${state.service.slotMinutes} minutes`;
       slotContent.querySelector("#brJobDuration").textContent = `${state.service.jobMinutes} minutes`;
       const fitting = form.querySelector('input[value="fitting-only"]');
@@ -622,6 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
         : "Not selected";
       slotContent.querySelector("#bookingReview").innerHTML = `
         <div><strong>Service</strong><span>${escapeHtml(state.service.name)}</span></div>
+        ${packageSelect.value ? `<div><strong>Package</strong><span>${escapeHtml(packageSelect.value)}</span></div>` : ""}
         <div><strong>Booking type</strong><span>${state.bookingType === "fitting-only" ? "Fitting Only" : "Supply & Fit"}</span></div>
         <div><strong>Vehicle</strong><span>${escapeHtml([yearSel.value, makeSel.value, modelSel.value].filter(Boolean).join(" "))}</span></div>
         <div><strong>Customer</strong><span>${escapeHtml(slotContent.querySelector("#brName").value)} · ${escapeHtml(slotContent.querySelector("#brPhone").value)}</span></div>
@@ -658,6 +684,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await window.BookingBackend.createCalendarBooking({
           requestId: state.requestId,
           serviceId: state.service.id,
+          package: packageSelect.value,
           bookingType: state.bookingType,
           approvalRequired,
           bookingSlotDuration: state.service.slotMinutes,

@@ -84,6 +84,7 @@ fields are additive:
 - `serviceId`, `service`, `bookingType`
 - `bookingSlotDuration`, `estimatedJobDuration`
 - `bookingStatus`
+- `package`
 - `vehicleMake`, `vehicleModel`, `vehicleYear`, `registration`
 - `engineVariant`, `fittingLocation`, `address`
 - `partDetails`, `productLink`, `uploadedImages`
