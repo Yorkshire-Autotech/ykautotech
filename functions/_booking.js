@@ -8,7 +8,6 @@ import {
   deleteDocument,
   getDocument,
   overlaps,
-  queryDocuments,
   updateDocument,
   zonedDateTime,
 } from "./_lib.js";
@@ -200,17 +199,13 @@ export async function loadBooking(env, id) {
   return booking;
 }
 
-export async function existingRequest(env, requestId) {
-  const matches = await queryDocuments(env, "bookings", "requestId", "EQUAL", requestId);
-  return matches[0] || null;
-}
-
 export async function createBooking(env, input) {
   const config = await bookingConfig(env);
   const booking = validateBooking(input, config);
-  const existing = await existingRequest(env, booking.requestId);
-  if (existing) return existing;
-  booking.id = crypto.randomUUID();
+  if (!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(booking.requestId)) {
+    throw new HttpError(400, "Invalid booking request identifier.", "invalid_request_id");
+  }
+  booking.id = booking.requestId;
   booking.ref = `YA-${booking.id.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
   if (booking.approvalRequired) {
     await reserveBooking(env, booking, "pending_approval");
