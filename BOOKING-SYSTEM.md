@@ -93,9 +93,10 @@ fields are additive:
 
 ## Image upload configuration
 
-Create a Cloudinary unsigned upload preset restricted to image files, a maximum
+The existing Cloudinary cloud is `db7olgnqq`. Create an unsigned upload preset
+restricted to image files, a maximum
 8 MB size, and the `yorkshire-autotech/booking-parts` folder. Set its cloud name
-and preset values in Cloudflare. If it is not configured, bookings still work,
+and preset values in Cloudflare. If the preset is not configured, bookings still work,
 but photo upload returns an explicit configuration error rather than silently
 discarding an image.
 

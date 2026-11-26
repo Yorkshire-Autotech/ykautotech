@@ -384,12 +384,12 @@ document.addEventListener("DOMContentLoaded", () => {
             </label>
           </div>
           <div class="form-group" id="brPartsGroup">
-            <label for="brPartDetails">Part details</label>
+            <label for="brPartDetails" id="brPartDetailsLabel">Part details</label>
             <textarea id="brPartDetails" placeholder="Brand, model, part number and anything else we should know"></textarea>
           </div>
           <div class="form-row">
-            <div class="form-group"><label for="brProductLink">Product link</label><input type="url" id="brProductLink" placeholder="https://…"></div>
-            <div class="form-group"><label for="brPhotos">Photographs</label><input type="file" id="brPhotos" accept="image/jpeg,image/png,image/webp" multiple></div>
+            <div class="form-group" id="brProductLinkGroup"><label for="brProductLink">Product link</label><input type="url" id="brProductLink" placeholder="https://…"></div>
+            <div class="form-group" id="brPhotosGroup"><label for="brPhotos">Photographs of the requested work</label><input type="file" id="brPhotos" accept="image/jpeg,image/png,image/webp" multiple></div>
           </div>
           <p class="booking-small" id="brPhotoStatus">Up to six JPG, PNG or WebP images, 8 MB each.</p>
         </section>
@@ -494,7 +494,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     function updateBookingType() {
       state.bookingType = form.querySelector('input[name="bookingType"]:checked')?.value || "fitting-only";
-      slotContent.querySelector("#brPartsGroup").hidden = state.bookingType !== "fitting-only";
+      const fittingOnly = state.bookingType === "fitting-only";
+      slotContent.querySelector("#brPartsGroup").hidden = false;
+      slotContent.querySelector("#brPartDetailsLabel").textContent =
+        fittingOnly ? "Part details" : "Describe what you would like fitted";
+      slotContent.querySelector("#brPartDetails").placeholder = fittingOnly
+        ? "Brand, model, part number and anything else we should know"
+        : "Tell us exactly what you want, any package options and the finish you are looking for";
+      slotContent.querySelector("#brProductLinkGroup").hidden = !fittingOnly;
+      slotContent.querySelector("#brProductLink").disabled = !fittingOnly;
+      if (!fittingOnly) slotContent.querySelector("#brProductLink").value = "";
+      slotContent.querySelector("#brPhotosGroup").hidden = fittingOnly;
+      slotContent.querySelector("#brPhotos").disabled = fittingOnly;
+      slotContent.querySelector("#brPhotoStatus").hidden = fittingOnly;
       const leadHours = state.bookingType === "supply-and-fit"
         ? Number(config.supplyAndFitLeadHours ?? 168)
         : Number(config.bookingLeadHours ?? 24);

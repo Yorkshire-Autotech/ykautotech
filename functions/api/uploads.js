@@ -5,7 +5,8 @@ const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 export async function onRequestPost({ request, env }) {
   try {
     assertSameOrigin(request, env);
-    if (!env.CLOUDINARY_CLOUD_NAME || !env.CLOUDINARY_UPLOAD_PRESET) {
+    const cloudName = env.CLOUDINARY_CLOUD_NAME || "db7olgnqq";
+    if (!env.CLOUDINARY_UPLOAD_PRESET) {
       throw new HttpError(503, "Photo uploads are not configured yet.", "uploads_not_configured");
     }
     const form = await request.formData();
@@ -21,7 +22,7 @@ export async function onRequestPost({ request, env }) {
     upload.set("upload_preset", env.CLOUDINARY_UPLOAD_PRESET);
     upload.set("folder", "yorkshire-autotech/booking-parts");
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${encodeURIComponent(env.CLOUDINARY_CLOUD_NAME)}/image/upload`,
+      `https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/image/upload`,
       { method: "POST", body: upload }
     );
     const data = await response.json();
