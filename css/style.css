@@ -686,6 +686,7 @@ button.cal-cell:hover { border-color: var(--gold); }
 .booking-progress span { height: 4px; border-radius: 99px; background: var(--border); }
 .booking-progress span.active { background: var(--gold); }
 .booking-step[hidden] { display: none; }
+.booking-step [hidden] { display: none !important; }
 .booking-duration-note {
   display: grid;
   gap: 8px;
