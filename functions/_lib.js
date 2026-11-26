@@ -1,6 +1,7 @@
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const CALENDAR_API = "https://www.googleapis.com/calendar/v3";
-const GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo";
+const FIREBASE_JWK_URL =
+  "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com";
 
 export class HttpError extends Error {
   constructor(status, message, code = "request_error") {
@@ -301,10 +302,17 @@ export function bearerToken(request) {
 export async function verifyFirebaseUser(request, env) {
   const token = bearerToken(request);
   if (!token) throw new HttpError(401, "An authenticated admin session is required.", "authentication_required");
+  const parts = token.split(".");
+  if (parts.length !== 3) throw new HttpError(401, "Invalid authentication token.", "invalid_token");
+  let header;
+  let claims;
+  try {
+    header = JSON.parse(base64UrlDecode(parts[0]));
+    claims = JSON.parse(base64UrlDecode(parts[1]));
+  } catch {
+    throw new HttpError(401, "Invalid authentication token.", "invalid_token");
+  }
   const projectId = env.FIREBASE_PROJECT_ID || JSON.parse(env.FIREBASE_SERVICE_ACCOUNT || "{}").project_id;
-  const verification = await fetch(`${GOOGLE_TOKEN_INFO_URL}?id_token=${encodeURIComponent(token)}`);
-  if (!verification.ok) throw new HttpError(401, "Invalid or expired admin session.", "invalid_token");
-  const claims = await verification.json();
   if (
     claims.aud !== projectId ||
     claims.iss !== `https://securetoken.google.com/${projectId}` ||
@@ -312,6 +320,29 @@ export async function verifyFirebaseUser(request, env) {
   ) {
     throw new HttpError(401, "Invalid or expired admin session.", "invalid_token");
   }
+  const keysResponse = await fetch(FIREBASE_JWK_URL);
+  if (!keysResponse.ok) throw new HttpError(503, "Unable to verify the admin session.", "auth_unavailable");
+  const { keys = [] } = await keysResponse.json();
+  const jwk = keys.find((key) => key.kid === header.kid);
+  if (!jwk) throw new HttpError(401, "Invalid authentication token.", "invalid_token");
+  const key = await crypto.subtle.importKey(
+    "jwk",
+    jwk,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["verify"]
+  );
+  const signatureBytes = Uint8Array.from(
+    atob(parts[2].replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (parts[2].length % 4)) % 4)),
+    (character) => character.charCodeAt(0)
+  );
+  const valid = await crypto.subtle.verify(
+    "RSASSA-PKCS1-v1_5",
+    key,
+    signatureBytes,
+    new TextEncoder().encode(`${parts[0]}.${parts[1]}`)
+  );
+  if (!valid) throw new HttpError(401, "Invalid authentication token.", "invalid_token");
   const allowed = (env.ADMIN_EMAILS || "yorkshireautotech@outlook.com")
     .split(",")
     .map((email) => email.trim().toLowerCase())
