@@ -99,13 +99,14 @@
       return data;
     },
 
-    async getAvailableSlots(dateStr, serviceId, duration) {
+    async getAvailableSlots(dateStr, serviceId, duration, bookingType = "fitting-only") {
       if (!isLive) {
         const booked = await api.getConfirmedSlots(dateStr);
         return slotsForDate(dateStr).filter((slot) => !booked.includes(slot));
       }
       const params = new URLSearchParams({ date: dateStr, serviceId: serviceId || "" });
       if (duration) params.set("duration", duration);
+      params.set("bookingType", bookingType);
       const response = await fetch(`/api/availability?${params}`);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Availability could not be checked.");

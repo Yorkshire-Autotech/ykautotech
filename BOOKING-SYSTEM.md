@@ -125,8 +125,10 @@ It is stored in server-only `settings/bookingConfig`. Service entries control:
 - Supply & Fit availability
 - approval requirement
 
-Working hours, holidays, lead time, maximum advance time, mobile fitting, and
-slot increment are in the same configuration. Ambient lighting defaults to a
+Working hours, holidays, lead times, maximum advance time, mobile fitting, and
+slot increment are in the same configuration. Fitting Only uses
+`bookingLeadHours` (24 hours by default); Supply & Fit uses
+`supplyAndFitLeadHours` (168 hours/seven days by default). Ambient lighting defaults to a
 60-minute calendar slot and 240-minute estimated work duration.
 
 ## Deployment and testing

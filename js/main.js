@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { id: "retrofits", name: "Retrofits", slotMinutes: 60, jobMinutes: 180, fittingOnly: true, supplyAndFit: true },
       { id: "electrical-upgrades", name: "Other Electrical Upgrades", slotMinutes: 60, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
     ];
-    let config = { services: fallbackServices, bookingLeadHours: 24, maxAdvanceDays: 180, workingHours: {}, allowMobileFitting: true };
+    let config = { services: fallbackServices, bookingLeadHours: 24, supplyAndFitLeadHours: 168, maxAdvanceDays: 180, workingHours: {}, allowMobileFitting: true };
     try {
       config = (await window.BookingBackend.getBookingConfig()) || config;
     } catch (error) {
@@ -477,9 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const toYMD = (date) =>
       `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    const earliestDate = new Date(Date.now() + Number(config.bookingLeadHours || 24) * 3600000);
     const latestDate = new Date(Date.now() + Number(config.maxAdvanceDays || 180) * 86400000);
-    dateInput.min = toYMD(earliestDate);
     dateInput.max = toYMD(latestDate);
 
     function updateService() {
@@ -497,6 +495,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateBookingType() {
       state.bookingType = form.querySelector('input[name="bookingType"]:checked')?.value || "fitting-only";
       slotContent.querySelector("#brPartsGroup").hidden = state.bookingType !== "fitting-only";
+      const leadHours = state.bookingType === "supply-and-fit"
+        ? Number(config.supplyAndFitLeadHours ?? 168)
+        : Number(config.bookingLeadHours ?? 24);
+      dateInput.min = toYMD(new Date(Date.now() + leadHours * 3600000));
+      const hint = slotContent.querySelector('[data-step="5"] .date-hint');
+      hint.textContent = state.bookingType === "supply-and-fit"
+        ? "Supply & Fit appointments require at least seven days' notice."
+        : "Fitting Only appointments require at least 24 hours' notice.";
+      if (dateInput.value && dateInput.value < dateInput.min) {
+        dateInput.value = "";
+        slotGrid.innerHTML = '<span class="slot-hint">Choose a date within the required notice period.</span>';
+        state.date = "";
+        state.slot = "";
+      }
     }
     serviceSelect.addEventListener("change", updateService);
     form.querySelectorAll('input[name="bookingType"]').forEach((input) => input.addEventListener("change", updateBookingType));
@@ -513,7 +525,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!state.date) return;
       slotGrid.innerHTML = '<span class="slot-hint">Checking availability…</span>';
       try {
-        const slots = await window.BookingBackend.getAvailableSlots(state.date, state.service.id, state.service.slotMinutes);
+        const slots = await window.BookingBackend.getAvailableSlots(
+          state.date,
+          state.service.id,
+          state.service.slotMinutes,
+          state.bookingType
+        );
         if (state.date !== dateInput.value) return;
         if (!slots.length) {
           slotGrid.innerHTML = '<span class="slot-hint">No times are available on this date. Please choose another day.</span>';

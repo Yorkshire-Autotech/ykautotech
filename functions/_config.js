@@ -29,6 +29,7 @@ export const DEFAULT_CONFIG = {
   holidays: [],
   slotIncrementMinutes: 30,
   bookingLeadHours: 24,
+  supplyAndFitLeadHours: 168,
   maxAdvanceDays: 180,
   allowMobileFitting: true,
 };

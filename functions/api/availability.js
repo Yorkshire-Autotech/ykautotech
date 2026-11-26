@@ -15,6 +15,7 @@ export async function onRequestGet({ request, env }) {
     const url = new URL(request.url);
     const date = url.searchParams.get("date") || "";
     const serviceId = url.searchParams.get("serviceId") || "";
+    const bookingType = url.searchParams.get("bookingType") || "fitting-only";
     const overrideMinutes = Number(url.searchParams.get("duration") || 0);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       throw new HttpError(400, "A valid date is required.", "invalid_date");
@@ -27,7 +28,11 @@ export async function onRequestGet({ request, env }) {
     }
     const day = new Date(`${date}T12:00:00`).getDay();
     const now = Date.now();
-    const earliest = now + Number(config.bookingLeadHours || 0) * 3_600_000;
+    const leadHours =
+      bookingType === "supply-and-fit"
+        ? Number(config.supplyAndFitLeadHours ?? 168)
+        : Number(config.bookingLeadHours ?? 24);
+    const earliest = now + leadHours * 3_600_000;
     const latest = now + Number(config.maxAdvanceDays || 180) * 86_400_000;
     const dateTime = new Date(`${date}T23:59:59`).getTime();
     if (config.holidays.includes(date) || dateTime < earliest || dateTime > latest) {

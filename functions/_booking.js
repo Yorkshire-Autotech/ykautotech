@@ -40,6 +40,19 @@ export function validateBooking(input, config) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(slot)) {
     throw new HttpError(400, "Please choose a valid appointment date and time.", "invalid_appointment");
   }
+  const leadHours =
+    bookingType === "supply-and-fit"
+      ? Number(config.supplyAndFitLeadHours ?? 168)
+      : Number(config.bookingLeadHours ?? 24);
+  if (new Date(`${date}T${slot}:00`).getTime() < Date.now() + leadHours * 3_600_000) {
+    throw new HttpError(
+      400,
+      bookingType === "supply-and-fit"
+        ? "Supply & Fit bookings require at least seven days' notice."
+        : "This appointment requires at least 24 hours' notice.",
+      "appointment_too_soon"
+    );
+  }
   const fittingLocation = input.fittingLocation === "mobile" ? "mobile" : "workshop";
   if (fittingLocation === "mobile" && !config.allowMobileFitting) {
     throw new HttpError(400, "Mobile fitting is not currently available online.", "mobile_unavailable");
