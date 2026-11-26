@@ -252,31 +252,37 @@ export async function queryDocuments(env, collection, field, operator, value) {
 
 export async function createDocumentsAtomically(env, documents) {
   const projectId = env.FIREBASE_PROJECT_ID || JSON.parse(env.FIREBASE_SERVICE_ACCOUNT || "{}").project_id;
-  const token = await googleServiceAccount(env);
-  const root = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)`;
-  const response = await fetch(`${root}/documents:commit`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      writes: documents.map(({ path, value }) => ({
-        update: {
-          name: `${root}/documents/${path}`,
-          fields: toFirestoreFields(value),
-        },
-        currentDocument: { exists: false },
-      })),
-    }),
-  });
-  const result = await response.json();
-  if (!response.ok) {
-    const conflict = response.status === 409 || /already exists|ABORTED/i.test(JSON.stringify(result));
-    throw new HttpError(
-      conflict ? 409 : 502,
-      conflict ? "That appointment has just been booked. Please choose another time." : "The booking could not be saved.",
-      conflict ? "slot_conflict" : "firebase_error"
-    );
+  void projectId;
+  const created = [];
+  try {
+    for (const { path, value } of documents) {
+      const separator = path.lastIndexOf("/");
+      const collection = path.slice(0, separator);
+      const id = path.slice(separator + 1);
+      await firestoreRequest(env, `${collection}?${new URLSearchParams({ documentId: id })}`, {
+        method: "POST",
+        body: JSON.stringify({ fields: toFirestoreFields(value) }),
+      });
+      created.push(path);
+    }
+    return { created };
+  } catch (error) {
+    for (const path of created.reverse()) {
+      try {
+        await deleteDocument(env, path);
+      } catch (cleanupError) {
+        console.error("Could not release failed booking lock", path, cleanupError);
+      }
+    }
+    if (error instanceof HttpError && (error.status === 409 || error.status === 502)) {
+      throw new HttpError(
+        409,
+        "That appointment has just been booked. Please choose another time.",
+        "slot_conflict"
+      );
+    }
+    throw error;
   }
-  return result;
 }
 
 export async function deleteDocument(env, path) {
