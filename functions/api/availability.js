@@ -74,10 +74,19 @@ export async function onRequestGet({ request, env }) {
         const startMs = new Date(zonedDateTime(date, time, timeZone)).getTime();
         const endMs = new Date(zonedDateTime(date, endTime, timeZone)).getTime();
         if (startMs < earliest) continue;
-        if (!busy.some((item) => overlaps(startMs, endMs, item.start, item.end))) slots.push(time);
+        slots.push({
+          time,
+          available: !busy.some((item) => overlaps(startMs, endMs, item.start, item.end)),
+        });
       }
     }
-    return json({ date, duration, slots: [...new Set(slots)] });
+    const uniqueSlots = [...new Map(slots.map((slot) => [slot.time, slot])).values()];
+    return json({
+      date,
+      duration,
+      slots: uniqueSlots.filter((slot) => slot.available).map((slot) => slot.time),
+      slotOptions: uniqueSlots,
+    });
   } catch (error) {
     return errorResponse(error);
   }

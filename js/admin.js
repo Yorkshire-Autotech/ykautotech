@@ -81,7 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const slots = await backend.getAvailableSlots(abDate.value, abService.value);
       abSlot.innerHTML = '<option value="">Choose a slot</option>' +
-        slots.map((slot) => `<option value="${slot}">${backend.slotLabel(slot)}</option>`).join("");
+        slots.filter((slot) => slot.available).map((slot) =>
+          `<option value="${slot.time}">${backend.slotLabel(slot.time)}</option>`
+        ).join("");
     } catch (error) {
       abSlot.innerHTML = `<option value="">${esc(error.message)}</option>`;
       return;

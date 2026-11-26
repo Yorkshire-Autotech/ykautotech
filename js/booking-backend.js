@@ -110,7 +110,8 @@
       const response = await fetch(`/api/availability?${params}`);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Availability could not be checked.");
-      return data.slots || [];
+      return data.slotOptions ||
+        (data.slots || []).map((time) => ({ time, available: true }));
     },
 
     async adminApi(path, options = {}) {

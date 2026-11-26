@@ -544,14 +544,24 @@ document.addEventListener("DOMContentLoaded", () => {
           state.bookingType
         );
         if (state.date !== dateInput.value) return;
-        if (!slots.length) {
-          slotGrid.innerHTML = '<span class="slot-hint">No times are available on this date. Please choose another day.</span>';
+        if (!slots.some((slot) => slot.available)) {
+          slotGrid.innerHTML = slots.length
+            ? slots.map((slot) =>
+                `<button type="button" class="slot-btn taken" data-slot="${slot.time}" disabled aria-label="Unavailable">
+                  <span class="slot-time">${window.BookingBackend.slotLabel(slot.time, state.service.slotMinutes)}</span>
+                  <span class="slot-status">Booked</span>
+                </button>`
+              ).join("")
+            : '<span class="slot-hint">No times are available on this date. Please choose another day.</span>';
           return;
         }
         slotGrid.innerHTML = slots.map((slot) =>
-          `<button type="button" class="slot-btn" data-slot="${slot}">${window.BookingBackend.slotLabel(slot, state.service.slotMinutes)}</button>`
+          `<button type="button" class="slot-btn${slot.available ? "" : " taken"}" data-slot="${slot.time}" ${slot.available ? "" : "disabled aria-label=\"Unavailable\""}>
+            <span class="slot-time">${window.BookingBackend.slotLabel(slot.time, state.service.slotMinutes)}</span>
+            ${slot.available ? "" : "<span class=\"slot-status\">Booked</span>"}
+          </button>`
         ).join("");
-        slotGrid.querySelectorAll(".slot-btn").forEach((button) => {
+        slotGrid.querySelectorAll(".slot-btn:not(.taken)").forEach((button) => {
           button.addEventListener("click", () => {
             slotGrid.querySelectorAll(".slot-btn").forEach((item) => item.classList.remove("selected"));
             button.classList.add("selected");
