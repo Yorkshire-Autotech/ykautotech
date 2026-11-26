@@ -306,70 +306,157 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("basketChooseSlot").addEventListener("click", openSlotPickerFromBasket);
   }
 
-  /* Booking request form inside the slot modal, opened from the basket */
-  let bookingVehicle = { make: "", model: "", year: "" };
-
-  function openSlotPickerFromBasket() {
+  /* Six-step booking flow inside the slot modal, opened from the basket. */
+  async function openSlotPickerFromBasket() {
     if (!slotContent) return;
     const cart = getCart();
     const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-    const names = cart.map((i) => i.name).join(", ");
-
-    /* Earliest requestable fitting date = 7 days from today */
-    const minFitting = new Date();
-    minFitting.setDate(minFitting.getDate() + 7);
-    const minFittingStr = `${minFitting.getFullYear()}-${String(minFitting.getMonth() + 1).padStart(2, "0")}-${String(minFitting.getDate()).padStart(2, "0")}`;
-    const minFittingLabel = minFitting.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+    const cartNames = cart.map((i) => i.name).join(", ");
+    const fallbackServices = [
+      { id: "diagnostics-coding", name: "Diagnostics & Coding", slotMinutes: 60, jobMinutes: 60, fittingOnly: true, supplyAndFit: true },
+      { id: "carplay", name: "CarPlay / Android Auto", slotMinutes: 60, jobMinutes: 60, fittingOnly: true, supplyAndFit: true },
+      { id: "ambient-lighting", name: "Ambient Lighting", slotMinutes: 60, jobMinutes: 240, fittingOnly: true, supplyAndFit: true },
+      { id: "starlight-headlining", name: "Starlight Headliner", slotMinutes: 120, jobMinutes: 480, fittingOnly: true, supplyAndFit: true },
+      { id: "reverse-camera", name: "Reverse Camera", slotMinutes: 120, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
+      { id: "dashcam", name: "Dashcam Installation", slotMinutes: 120, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
+      { id: "virtual-cockpit", name: "Virtual Cockpit", slotMinutes: 120, jobMinutes: 240, fittingOnly: true, supplyAndFit: true },
+      { id: "steering-wheel", name: "Steering Wheel Upgrades", slotMinutes: 60, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
+      { id: "ecu-programming", name: "ECU / TCU Programming", slotMinutes: 60, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
+      { id: "ecu-cloning", name: "ECU Cloning", slotMinutes: 120, jobMinutes: 240, fittingOnly: true, supplyAndFit: true },
+      { id: "retrofits", name: "Retrofits", slotMinutes: 60, jobMinutes: 180, fittingOnly: true, supplyAndFit: true },
+      { id: "electrical-upgrades", name: "Other Electrical Upgrades", slotMinutes: 60, jobMinutes: 120, fittingOnly: true, supplyAndFit: true },
+    ];
+    let config = { services: fallbackServices, bookingLeadHours: 24, maxAdvanceDays: 180, workingHours: {}, allowMobileFitting: true };
+    try {
+      config = (await window.BookingBackend.getBookingConfig()) || config;
+    } catch (error) {
+      if (window.BookingBackend.isLive) {
+        showToast(`⚠ ${error.message}`);
+      }
+    }
+    const state = {
+      step: 1,
+      service: null,
+      bookingType: "fitting-only",
+      fittingLocation: "workshop",
+      date: "",
+      slot: "",
+      uploadedImages: [],
+      requestId: crypto.randomUUID(),
+    };
+    const lowerCartName = cartNames.toLowerCase();
+    state.service =
+      config.services.find((service) => lowerCartName.includes(service.name.toLowerCase().split(" / ")[0])) ||
+      config.services.find((service) => lowerCartName.includes(service.id.replace(/-/g, " "))) ||
+      config.services.find((service) => lowerCartName.includes("ambient") && service.id === "ambient-lighting") ||
+      config.services[0];
 
     closeCart();
     slotContent.innerHTML = `
-      <h3>Request Your <span class="gold-text">Booking</span></h3>
-      <p class="modal-sub">Send us your details and preferred date — <strong>we'll confirm by phone or email</strong> before anything is booked in.</p>
-      <div class="order-summary">
-        ${cart.map((i) => `<div class="sum-row"><span>${i.name} × ${i.qty}</span><span>£${(i.price * i.qty).toLocaleString("en-GB")}</span></div>`).join("")}
-        <div class="sum-row total"><span>Total</span><span>£${total.toLocaleString("en-GB")}</span></div>
-      </div>
+      <div class="booking-progress" aria-label="Booking progress"></div>
+      <span class="eyebrow" id="bookingStepLabel">Step 1 of 6</span>
+      <h3>Book Your <span class="gold-text">Workshop Visit</span></h3>
+      <p class="modal-sub" id="bookingStepIntro">Select the service you need.</p>
       <form id="bookingRequestForm" class="form" style="padding:0;background:none;border:none">
-        <div class="form-row">
-          <div class="form-group"><label for="brName">Full Name *</label><input type="text" id="brName" required placeholder="Your name"></div>
-          <div class="form-group"><label for="brPhone">Phone *</label><input type="tel" id="brPhone" required placeholder="07..."></div>
-        </div>
-        <div class="form-group"><label for="brEmail">Email *</label><input type="email" id="brEmail" required placeholder="you@email.com"></div>
-        <div class="form-group">
-          <label>Your Vehicle *</label>
-          <div class="vehicle-row">
-            <select id="bkMake" required><option value="">Make</option></select>
-            <select id="bkModel" required disabled><option value="">Model</option></select>
-            <select id="bkYear" required disabled><option value="">Year</option></select>
+        <section class="booking-step" data-step="1">
+          <div class="form-group">
+            <label for="brService">Service *</label>
+            <select id="brService" required>
+              ${config.services.map((service) => `<option value="${escapeHtml(service.id)}" ${service.id === state.service.id ? "selected" : ""}>${escapeHtml(service.name)}</option>`).join("")}
+            </select>
           </div>
+          <div class="booking-duration-note">
+            <span>Reserved in the calendar: <strong id="brSlotDuration"></strong></span>
+            <span>Estimated work duration: <strong id="brJobDuration"></strong></span>
+          </div>
+        </section>
+        <section class="booking-step" data-step="2" hidden>
+          <div class="booking-type-grid">
+            <label class="booking-type-card">
+              <input type="radio" name="bookingType" value="fitting-only" checked>
+              <strong>Fitting Only</strong>
+              <span>You supply compatible parts. Eligible appointments are confirmed immediately.</span>
+            </label>
+            <label class="booking-type-card">
+              <input type="radio" name="bookingType" value="supply-and-fit">
+              <strong>Supply &amp; Fit</strong>
+              <span>We source the parts and check compatibility, pricing and timing. Approval is required.</span>
+            </label>
+          </div>
+          <div class="form-group" id="brPartsGroup">
+            <label for="brPartDetails">Part details</label>
+            <textarea id="brPartDetails" placeholder="Brand, model, part number and anything else we should know"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="brProductLink">Product link</label><input type="url" id="brProductLink" placeholder="https://…"></div>
+            <div class="form-group"><label for="brPhotos">Photographs</label><input type="file" id="brPhotos" accept="image/jpeg,image/png,image/webp" multiple></div>
+          </div>
+          <p class="booking-small" id="brPhotoStatus">Up to six JPG, PNG or WebP images, 8 MB each.</p>
+        </section>
+        <section class="booking-step" data-step="3" hidden>
+          <div class="form-group">
+            <label>Your Vehicle *</label>
+            <div class="vehicle-row">
+              <select id="bkMake" required><option value="">Make</option></select>
+              <select id="bkModel" required disabled><option value="">Model</option></select>
+              <select id="bkYear" required disabled><option value="">Year</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="brRegistration">Registration</label><input type="text" id="brRegistration" maxlength="20" autocomplete="off" placeholder="AB12 CDE"></div>
+            <div class="form-group"><label for="brEngine">Engine / variant</label><input type="text" id="brEngine" placeholder="e.g. 2.0 TDI, M-Sport"></div>
+          </div>
+          <div class="form-group"><label for="brAdditional">Additional information</label><textarea id="brAdditional" placeholder="Tell us about modifications, warning lights or compatibility questions"></textarea></div>
+        </section>
+        <section class="booking-step" data-step="4" hidden>
+          <div class="form-row">
+            <div class="form-group"><label for="brName">Full Name *</label><input type="text" id="brName" required autocomplete="name"></div>
+            <div class="form-group"><label for="brPhone">Telephone *</label><input type="tel" id="brPhone" required autocomplete="tel" placeholder="07..."></div>
+          </div>
+          <div class="form-group"><label for="brEmail">Email *</label><input type="email" id="brEmail" required autocomplete="email"></div>
+          <div class="form-group">
+            <label for="brLocation">Fitting location *</label>
+            <select id="brLocation"><option value="workshop">Yorkshire Autotech workshop</option>${config.allowMobileFitting ? '<option value="mobile">Mobile fitting</option>' : ""}</select>
+          </div>
+          <div class="form-group" id="brAddressGroup" hidden><label for="brAddress">Mobile fitting address *</label><input type="text" id="brAddress" autocomplete="street-address"></div>
+        </section>
+        <section class="booking-step" data-step="5" hidden>
+          <div class="form-group">
+            <label>Appointment date *</label>
+            <input type="date" id="brDate" min="" max="" required>
+            <span class="date-hint">Times shown use current Google Calendar availability.</span>
+            <span class="date-error" id="brDateError">Please pick an appointment date.</span>
+          </div>
+          <div class="form-group">
+            <label>Appointment time *</label>
+            <div class="slot-grid" id="brSlots"><span class="slot-hint">Pick a date to check live availability.</span></div>
+            <span class="date-error" id="brSlotError">Please choose an available time.</span>
+          </div>
+        </section>
+        <section class="booking-step" data-step="6" hidden>
+          <div class="booking-review" id="bookingReview"></div>
+          <label class="booking-consent"><input type="checkbox" id="brConsent" required> I agree that these details may be used to arrange and manage this appointment.</label>
+          <p class="form-error" id="bookingSubmitError" role="alert"></p>
+        </section>
+        <div class="booking-step-actions">
+          <button type="button" class="btn btn-outline" id="bookingBack" hidden>Back</button>
+          <button type="button" class="btn btn-gold" id="bookingNext">Continue</button>
         </div>
-        <div class="form-group">
-          <label>Preferred Fitting Date *</label>
-          <div class="cal" id="brCal"></div>
-          <span class="date-hint">Earliest availability: ${minFittingLabel}</span>
-          <span class="date-error" id="brDateError">Please pick a fitting date.</span>
-        </div>
-        <div class="form-group">
-          <label>Preferred Time Slot *</label>
-          <div class="slot-grid" id="brSlots"><span class="slot-hint">Pick a date to see available times.</span></div>
-          <span class="date-error" id="brSlotError">Please choose a time slot.</span>
-        </div>
-        <div class="form-group"><label for="brNotes">Notes</label><textarea id="brNotes" placeholder="Anything we should know? Additional strips, specific requests…"></textarea></div>
-        <div class="wa-notice">💬 <strong>Please note:</strong> after you request your booking, you'll need to <strong>send your booking to us on WhatsApp</strong> (it's pre-written for you). Your booking isn't confirmed until we receive it on WhatsApp.</div>
-        <button type="submit" class="btn btn-gold btn-block">Request Booking — £${total.toLocaleString("en-GB")}</button>
       </form>`;
 
-    /* Populate makes from the shared VEHICLES data if present, else a local list */
+    const form = slotContent.querySelector("#bookingRequestForm");
+    const nextBtn = slotContent.querySelector("#bookingNext");
+    const backBtn = slotContent.querySelector("#bookingBack");
+    const serviceSelect = slotContent.querySelector("#brService");
+    const slotGrid = slotContent.querySelector("#brSlots");
+    const dateInput = slotContent.querySelector("#brDate");
     const makeSel = slotContent.querySelector("#bkMake");
     const modelSel = slotContent.querySelector("#bkModel");
     const yearSel = slotContent.querySelector("#bkYear");
     const vehicles = window.VEHICLES || BOOKING_VEHICLES;
     Object.keys(vehicles).forEach((m) => makeSel.add(new Option(m, m)));
-
+    makeSel.value = "";
     makeSel.addEventListener("change", () => {
-      bookingVehicle.make = makeSel.value;
-      bookingVehicle.model = "";
-      bookingVehicle.year = "";
       modelSel.innerHTML = '<option value="">Model</option>';
       yearSel.innerHTML = '<option value="">Year</option>';
       yearSel.disabled = true;
@@ -380,190 +467,245 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     modelSel.addEventListener("change", () => {
-      bookingVehicle.model = modelSel.value;
-      bookingVehicle.year = "";
       yearSel.innerHTML = '<option value="">Year</option>';
-      if (modelSel.value) {
-        const { from, to } = vehicles[bookingVehicle.make][modelSel.value];
+      if (modelSel.value && makeSel.value) {
+        const { from, to } = vehicles[makeSel.value][modelSel.value];
         for (let y = to; y >= from; y--) yearSel.add(new Option(y, y));
         yearSel.disabled = false;
       } else yearSel.disabled = true;
     });
 
-    yearSel.addEventListener("change", () => {
-      bookingVehicle.year = yearSel.value;
+    const toYMD = (date) =>
+      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const earliestDate = new Date(Date.now() + Number(config.bookingLeadHours || 24) * 3600000);
+    const latestDate = new Date(Date.now() + Number(config.maxAdvanceDays || 180) * 86400000);
+    dateInput.min = toYMD(earliestDate);
+    dateInput.max = toYMD(latestDate);
+
+    function updateService() {
+      state.service = config.services.find((service) => service.id === serviceSelect.value);
+      slotContent.querySelector("#brSlotDuration").textContent = `${state.service.slotMinutes} minutes`;
+      slotContent.querySelector("#brJobDuration").textContent = `${state.service.jobMinutes} minutes`;
+      const fitting = form.querySelector('input[value="fitting-only"]');
+      const supplied = form.querySelector('input[value="supply-and-fit"]');
+      fitting.disabled = !state.service.fittingOnly;
+      supplied.disabled = !state.service.supplyAndFit;
+      if (!fitting.disabled) fitting.checked = true;
+      else supplied.checked = true;
+      updateBookingType();
+    }
+    function updateBookingType() {
+      state.bookingType = form.querySelector('input[name="bookingType"]:checked')?.value || "fitting-only";
+      slotContent.querySelector("#brPartsGroup").hidden = state.bookingType !== "fitting-only";
+    }
+    serviceSelect.addEventListener("change", updateService);
+    form.querySelectorAll('input[name="bookingType"]').forEach((input) => input.addEventListener("change", updateBookingType));
+    slotContent.querySelector("#brLocation").addEventListener("change", (event) => {
+      state.fittingLocation = event.target.value;
+      slotContent.querySelector("#brAddressGroup").hidden = state.fittingLocation !== "mobile";
+      slotContent.querySelector("#brAddress").required = state.fittingLocation === "mobile";
     });
 
-    /* ----- Time slot picker: shows the day's slots, greys out confirmed ones ----- */
-    const slotGrid = slotContent.querySelector("#brSlots");
-    let selectedSlot = "";
-    let selectedDate = "";
-
-    async function renderSlots(dateStr) {
-      selectedSlot = "";
+    async function renderSlots() {
+      state.slot = "";
+      state.date = dateInput.value;
       slotContent.querySelector("#brSlotError").classList.remove("show");
-      if (!dateStr || dateStr < minFittingStr) {
-        slotGrid.innerHTML = '<span class="slot-hint">Pick a date to see available times.</span>';
-        return;
-      }
+      if (!state.date) return;
       slotGrid.innerHTML = '<span class="slot-hint">Checking availability…</span>';
-      let booked = [];
       try {
-        booked = await window.BookingBackend.getConfirmedSlots(dateStr);
-      } catch { /* if availability can't be fetched, show all slots */ }
-      /* Date may have changed while we were fetching */
-      if (selectedDate !== dateStr) return;
-
-      const slots = window.BookingBackend.slotsForDate(dateStr);
-      slotGrid.innerHTML = slots.map((s) => {
-        const taken = booked.includes(s);
-        return `<button type="button" class="slot-btn${taken ? " taken" : ""}" data-slot="${s}" ${taken ? "disabled" : ""}>
-            ${window.BookingBackend.slotLabel(s)}${taken ? "<span>Booked</span>" : ""}
-          </button>`;
-      }).join("");
-
-      slotGrid.querySelectorAll(".slot-btn:not(.taken)").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          slotGrid.querySelectorAll(".slot-btn").forEach((b) => b.classList.remove("selected"));
-          btn.classList.add("selected");
-          selectedSlot = btn.dataset.slot;
-          slotContent.querySelector("#brSlotError").classList.remove("show");
+        const slots = await window.BookingBackend.getAvailableSlots(state.date, state.service.id, state.service.slotMinutes);
+        if (state.date !== dateInput.value) return;
+        if (!slots.length) {
+          slotGrid.innerHTML = '<span class="slot-hint">No times are available on this date. Please choose another day.</span>';
+          return;
+        }
+        slotGrid.innerHTML = slots.map((slot) =>
+          `<button type="button" class="slot-btn" data-slot="${slot}">${window.BookingBackend.slotLabel(slot, state.service.slotMinutes)}</button>`
+        ).join("");
+        slotGrid.querySelectorAll(".slot-btn").forEach((button) => {
+          button.addEventListener("click", () => {
+            slotGrid.querySelectorAll(".slot-btn").forEach((item) => item.classList.remove("selected"));
+            button.classList.add("selected");
+            state.slot = button.dataset.slot;
+            slotContent.querySelector("#brSlotError").classList.remove("show");
+          });
         });
-      });
+      } catch (error) {
+        slotGrid.innerHTML = `<span class="slot-hint" role="alert">${escapeHtml(error.message)}</span>`;
+      }
+    }
+    dateInput.addEventListener("change", renderSlots);
+
+    async function uploadPhotos() {
+      const files = [...slotContent.querySelector("#brPhotos").files];
+      if (!files.length) return;
+      if (files.length > 6) throw new Error("Please choose no more than six photographs.");
+      const status = slotContent.querySelector("#brPhotoStatus");
+      const uploaded = [];
+      for (const file of files) {
+        status.textContent = `Uploading ${file.name}…`;
+        const body = new FormData();
+        body.append("file", file);
+        body.append("companyWebsite", "");
+        const response = await fetch("/api/uploads", { method: "POST", body });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Photo upload failed.");
+        uploaded.push(data.url);
+      }
+      state.uploadedImages = uploaded;
+      status.textContent = `${uploaded.length} photograph${uploaded.length === 1 ? "" : "s"} ready.`;
     }
 
-    /* ----- Always-visible calendar for the fitting date ----- */
-    const calEl = slotContent.querySelector("#brCal");
-    const toYMD = (d) =>
-      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    const minMonth = new Date(minFitting.getFullYear(), minFitting.getMonth(), 1);
-    let calMonth = new Date(minMonth);
-
-    function renderCal() {
-      const year = calMonth.getFullYear();
-      const month = calMonth.getMonth();
-      const monthLabel = calMonth.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
-      const atMinMonth = calMonth <= minMonth;
-      /* Monday-first offset for the 1st of the month */
-      const lead = (new Date(year, month, 1).getDay() + 6) % 7;
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      let cells = "";
-      for (let i = 0; i < lead; i++) cells += '<span class="cal-cell empty"></span>';
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day);
-        const ymd = toYMD(date);
-        const disabled = ymd < minFittingStr;
-        const classes = ["cal-cell"];
-        if (disabled) classes.push("off");
-        if (ymd === selectedDate) classes.push("selected");
-        cells += disabled
-          ? `<span class="${classes.join(" ")}">${day}</span>`
-          : `<button type="button" class="${classes.join(" ")}" data-date="${ymd}">${day}</button>`;
-      }
-
-      calEl.innerHTML = `
-        <div class="cal-head">
-          <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month" ${atMinMonth ? "disabled" : ""}>‹</button>
-          <span class="cal-month">${monthLabel}</span>
-          <button type="button" class="cal-nav" id="calNext" aria-label="Next month">›</button>
-        </div>
-        <div class="cal-grid cal-days">
-          ${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => `<span>${d}</span>`).join("")}
-        </div>
-        <div class="cal-grid">${cells}</div>`;
-
-      calEl.querySelector("#calPrev").addEventListener("click", () => {
-        calMonth = new Date(year, month - 1, 1);
-        renderCal();
+    const intros = [
+      "Select the service you need.",
+      "Choose who supplies the parts and tell us about them.",
+      "Tell us about your vehicle.",
+      "Tell us how to contact you and where the work will happen.",
+      "Choose a live appointment slot.",
+      "Check the details before submitting.",
+    ];
+    function renderStep() {
+      form.querySelectorAll(".booking-step").forEach((section) => {
+        section.hidden = Number(section.dataset.step) !== state.step;
       });
-      calEl.querySelector("#calNext").addEventListener("click", () => {
-        calMonth = new Date(year, month + 1, 1);
-        renderCal();
-      });
-      calEl.querySelectorAll(".cal-cell[data-date]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          selectedDate = btn.dataset.date;
-          calEl.querySelectorAll(".cal-cell.selected").forEach((c) => c.classList.remove("selected"));
-          btn.classList.add("selected");
-          slotContent.querySelector("#brDateError").classList.remove("show");
-          renderSlots(selectedDate);
-        });
-      });
+      slotContent.querySelector("#bookingStepLabel").textContent = `Step ${state.step} of 6`;
+      slotContent.querySelector("#bookingStepIntro").textContent = intros[state.step - 1];
+      slotContent.querySelector(".booking-progress").innerHTML = Array.from({ length: 6 }, (_, index) =>
+        `<span class="${index + 1 <= state.step ? "active" : ""}"></span>`
+      ).join("");
+      backBtn.hidden = state.step === 1;
+      nextBtn.textContent = state.step === 6
+        ? (state.bookingType === "supply-and-fit" || state.service.approvalRequired ? "Submit for Approval" : "Confirm Booking")
+        : "Continue";
+      if (state.step === 6) renderReview();
     }
-    renderCal();
 
-    slotContent.querySelector("#bookingRequestForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    function durationLabel(minutes) {
+      const hours = Math.floor(minutes / 60);
+      const remainder = minutes % 60;
+      return hours ? `${hours} hr${hours > 1 ? "s" : ""}${remainder ? ` ${remainder} min` : ""}` : `${minutes} min`;
+    }
+    function renderReview() {
+      const dateLabel = state.date
+        ? new Date(`${state.date}T12:00:00`).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+        : "Not selected";
+      slotContent.querySelector("#bookingReview").innerHTML = `
+        <div><strong>Service</strong><span>${escapeHtml(state.service.name)}</span></div>
+        <div><strong>Booking type</strong><span>${state.bookingType === "fitting-only" ? "Fitting Only" : "Supply & Fit"}</span></div>
+        <div><strong>Vehicle</strong><span>${escapeHtml([yearSel.value, makeSel.value, modelSel.value].filter(Boolean).join(" "))}</span></div>
+        <div><strong>Customer</strong><span>${escapeHtml(slotContent.querySelector("#brName").value)} · ${escapeHtml(slotContent.querySelector("#brPhone").value)}</span></div>
+        <div><strong>Appointment</strong><span>${escapeHtml(dateLabel)} at ${state.slot ? escapeHtml(window.BookingBackend.slotLabel(state.slot, state.service.slotMinutes)) : "Not selected"}</span></div>
+        <div><strong>Reserved time</strong><span>${durationLabel(state.service.slotMinutes)}</span></div>
+        <div><strong>Estimated work</strong><span>${durationLabel(state.service.jobMinutes)}</span></div>
+        ${total ? `<div><strong>Basket estimate</strong><span>£${total.toLocaleString("en-GB")}</span></div>` : ""}
+      `;
+    }
 
-      if (!selectedDate) {
-        slotContent.querySelector("#brDateError").classList.add("show");
-        calEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        return;
+    function validateStep() {
+      const section = form.querySelector(`.booking-step[data-step="${state.step}"]`);
+      const controls = [...section.querySelectorAll("input, select, textarea")].filter((item) => !item.disabled && !item.hidden && item.offsetParent !== null);
+      for (const control of controls) {
+        if (!control.checkValidity()) {
+          control.reportValidity();
+          return false;
+        }
       }
-      if (!selectedSlot) {
-        slotContent.querySelector("#brSlotError").classList.add("show");
-        slotGrid.scrollIntoView({ behavior: "smooth", block: "center" });
-        return;
+      if (state.step === 5 && (!state.date || !state.slot)) {
+        slotContent.querySelector(state.date ? "#brSlotError" : "#brDateError").classList.add("show");
+        return false;
       }
+      return true;
+    }
 
-      const chosen = new Date(selectedDate + "T12:00:00");
-      const ref = "YA-" + Math.random().toString(36).slice(2, 8).toUpperCase();
-      const vehicleStr = [bookingVehicle.year, bookingVehicle.make, bookingVehicle.model].filter(Boolean).join(" ");
-      const dateLabel = chosen.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
-      const slotText = window.BookingBackend.slotLabel(selectedSlot);
-
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Sending…";
+    async function submit() {
+      const button = nextBtn;
+      button.disabled = true;
+      button.textContent = "Saving booking…";
+      slotContent.querySelector("#bookingSubmitError").textContent = "";
       try {
-        await window.BookingBackend.submitBooking({
-          ref,
+        const approvalRequired = state.bookingType === "supply-and-fit" || Boolean(state.service.approvalRequired);
+        const result = await window.BookingBackend.createCalendarBooking({
+          requestId: state.requestId,
+          serviceId: state.service.id,
+          bookingType: state.bookingType,
+          approvalRequired,
+          bookingSlotDuration: state.service.slotMinutes,
+          estimatedJobDuration: state.service.jobMinutes,
           name: slotContent.querySelector("#brName").value.trim(),
           phone: slotContent.querySelector("#brPhone").value.trim(),
           email: slotContent.querySelector("#brEmail").value.trim(),
-          vehicle: vehicleStr,
-          items: names,
+          vehicleMake: makeSel.value,
+          vehicleModel: modelSel.value,
+          vehicleYear: yearSel.value,
+          registration: slotContent.querySelector("#brRegistration").value.trim(),
+          engineVariant: slotContent.querySelector("#brEngine").value.trim(),
+          additionalInformation: slotContent.querySelector("#brAdditional").value.trim(),
+          fittingLocation: state.fittingLocation,
+          address: slotContent.querySelector("#brAddress").value.trim(),
+          date: state.date,
+          slot: state.slot,
+          partDetails: slotContent.querySelector("#brPartDetails").value.trim(),
+          productLink: slotContent.querySelector("#brProductLink").value.trim(),
+          uploadedImages: state.uploadedImages,
+          notes: approvalRequired ? `Supply & Fit / approval request. Basket: ${cartNames}` : `Basket: ${cartNames}`,
           total,
-          date: selectedDate,
-          slot: selectedSlot,
-          notes: slotContent.querySelector("#brNotes").value.trim(),
         });
-      } catch {
-        submitBtn.disabled = false;
-        submitBtn.textContent = `Request Booking — £${total.toLocaleString("en-GB")}`;
-        showToast("⚠ Couldn't send your request — please try again.");
-        return;
+        const pending = result.status === "pending_approval" || result.status === "pending";
+        const dateLabel = new Date(`${state.date}T12:00:00`).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+        const message =
+          `Hi Yorkshire Autotech, booking ${result.ref} has been submitted for ${state.service.name} ` +
+          `on ${dateLabel} at ${window.BookingBackend.slotLabel(state.slot, state.service.slotMinutes)}. ` +
+          `Vehicle: ${yearSel.value} ${makeSel.value} ${modelSel.value}, registration ${slotContent.querySelector("#brRegistration").value || "not supplied"}. ` +
+          `Booking type: ${state.bookingType === "fitting-only" ? "Fitting Only" : "Supply & Fit"}.`;
+        slotContent.innerHTML = `
+          <div class="checkout-success">
+            <div class="tick">${pending ? "📋" : "✅"}</div>
+            <h3>${pending ? "Request Sent for Approval" : "Booking Confirmed"}</h3>
+            <p>Reference <span class="order-ref">${escapeHtml(result.ref)}</span>.<br>
+            ${pending
+              ? `We’ll check compatibility, parts, pricing and availability, then contact you. Your requested time is not reserved until we approve it.`
+              : `Your appointment is reserved in the workshop calendar for ${escapeHtml(dateLabel)} at ${escapeHtml(window.BookingBackend.slotLabel(state.slot, state.service.slotMinutes))}.`}
+            </p>
+            <br>
+            <a class="btn btn-gold btn-block" href="${window.BookingBackend.waLink(window.BookingBackend.businessWhatsApp, message)}" target="_blank" rel="noopener">💬 Contact Us on WhatsApp</a>
+            <p class="wa-hint">Your details are pre-filled — press send if you would like to message us now.</p>
+            <button class="btn btn-outline" id="bookingSuccessClose">Continue Browsing</button>
+          </div>`;
+        saveCart([]);
+        document.getElementById("bookingSuccessClose").addEventListener("click", closeSlot);
+      } catch (error) {
+        slotContent.querySelector("#bookingSubmitError").textContent = error.message || "The booking could not be saved.";
+        button.disabled = false;
+        button.textContent = state.bookingType === "supply-and-fit" || state.service.approvalRequired
+          ? "Submit for Approval"
+          : "Confirm Booking";
       }
+    }
 
-      const waMessage =
-        `Hi Yorkshire Autotech! I've just sent a booking request on your website.\n\n` +
-        `Reference: ${ref}\n` +
-        `Name: ${slotContent.querySelector("#brName").value.trim()}\n` +
-        `Service: ${names}\n` +
-        (vehicleStr ? `Vehicle: ${vehicleStr}\n` : "") +
-        `Date: ${dateLabel}\n` +
-        `Time: ${slotText}\n` +
-        `Total: £${total.toLocaleString("en-GB")}\n\n` +
-        `Please confirm my booking. Thanks!`;
-      const waHref = window.BookingBackend.waLink(window.BookingBackend.businessWhatsApp, waMessage);
-
-      slotContent.innerHTML = `
-        <div class="checkout-success">
-          <div class="tick">✅</div>
-          <h3>One Last Step — Send It on WhatsApp</h3>
-          <p>Thank you! Your reference is <span class="order-ref">${ref}</span>.<br>
-          We've received your request for <strong style="color:var(--gold-light)">${names}</strong>${vehicleStr ? ` for your ${vehicleStr}` : ""} on <strong style="color:var(--gold-light)">${dateLabel}</strong> at <strong style="color:var(--gold-light)">${slotText}</strong>.<br><br>
-          <strong>Nothing is booked in yet</strong> — <strong style="color:var(--gold-light)">please confirm your details with us via WhatsApp</strong> using the button below, and we'll get you booked in. You can also reach us by phone or email if you prefer.</p>
-          <br>
-          <a class="btn btn-gold btn-block" href="${waHref}" target="_blank" rel="noopener">💬 Send Us Your Booking on WhatsApp</a>
-          <p class="wa-hint">Fastest way to get confirmed — your booking details are pre-written, just press send.</p>
-          <button class="btn btn-outline" id="bookingSuccessClose">Continue Browsing</button>
-        </div>`;
-      saveCart([]);
-      document.getElementById("bookingSuccessClose").addEventListener("click", closeSlot);
+    nextBtn.addEventListener("click", async () => {
+      if (!validateStep()) return;
+      nextBtn.disabled = true;
+      try {
+        if (state.step === 2 && slotContent.querySelector("#brPhotos").files.length) await uploadPhotos();
+        if (state.step === 6) {
+          await submit();
+          return;
+        }
+        state.step += 1;
+        renderStep();
+      } catch (error) {
+        showToast(`⚠ ${error.message}`);
+      } finally {
+        if (state.step !== 6 || slotContent.querySelector("#bookingSubmitError")) nextBtn.disabled = false;
+      }
+    });
+    backBtn.addEventListener("click", () => {
+      state.step = Math.max(1, state.step - 1);
+      renderStep();
     });
 
+    updateService();
+    renderStep();
     slotOverlay.classList.add("open");
     slotModal.classList.add("open");
     document.body.style.overflow = "hidden";

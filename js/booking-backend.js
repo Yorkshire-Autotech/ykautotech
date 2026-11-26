@@ -44,14 +44,17 @@
     return d.getDay() === 5 ? FRIDAY_SLOTS.slice() : WEEK_SLOTS.slice();
   }
 
-  function slotLabel(slot) {
+  function slotLabel(slot, duration = 60) {
     const [h, m] = slot.split(":").map(Number);
     const fmt = (hh, mm) => {
+      hh = hh + Math.floor(mm / 60);
+      mm = mm % 60;
       const suffix = hh >= 12 ? "pm" : "am";
       const h12 = ((hh + 11) % 12) + 1;
       return `${h12}:${String(mm).padStart(2, "0")}${suffix}`;
     };
-    return `${fmt(h, m)} – ${fmt(h + 1, m)}`;
+    const end = h * 60 + m + Number(duration);
+    return `${fmt(h, m)} – ${fmt(Math.floor(end / 60), end % 60)}`;
   }
 
   /* ----- Firebase vs demo mode ----- */
@@ -88,6 +91,127 @@
     toIntlPhone,
     businessWhatsApp: WHATSAPP_NUMBER,
 
+    async getBookingConfig() {
+      if (!isLive) return null;
+      const response = await fetch("/api/config");
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Booking configuration is unavailable.");
+      return data;
+    },
+
+    async getAvailableSlots(dateStr, serviceId, duration) {
+      if (!isLive) {
+        const booked = await api.getConfirmedSlots(dateStr);
+        return slotsForDate(dateStr).filter((slot) => !booked.includes(slot));
+      }
+      const params = new URLSearchParams({ date: dateStr, serviceId: serviceId || "" });
+      if (duration) params.set("duration", duration);
+      const response = await fetch(`/api/availability?${params}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Availability could not be checked.");
+      return data.slots || [];
+    },
+
+    async adminApi(path, options = {}) {
+      if (!isLive) throw new Error("Admin API is unavailable in demo mode.");
+      const user = firebase.auth().currentUser;
+      if (!user) throw new Error("Please sign in again.");
+      const token = await user.getIdToken();
+      const response = await fetch(path, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          ...(options.headers || {}),
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "The admin request failed.");
+      return data;
+    },
+
+    async createCalendarBooking(booking) {
+      if (!isLive) return api.submitBooking(booking);
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(booking),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "The booking could not be saved.");
+      fetch(`https://formsubmit.co/ajax/${NOTIFY_EMAIL}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: `${data.status === "pending_approval" ? "Booking approval request" : "Booking confirmed"} ${data.ref}`,
+          _template: "table",
+          Reference: data.ref,
+          Name: booking.name,
+          Phone: booking.phone,
+          Email: booking.email,
+          Vehicle: [booking.vehicleYear, booking.vehicleMake, booking.vehicleModel].filter(Boolean).join(" "),
+          Registration: booking.registration || "Not supplied",
+          Service: booking.serviceId,
+          "Booking type": booking.bookingType,
+          Date: data.date,
+          Slot: data.slot,
+          "Reserved minutes": data.bookingSlotDuration,
+          "Estimated work minutes": data.estimatedJobDuration,
+          Notes: booking.notes || "None",
+        }),
+      }).catch(() => {});
+      return data;
+    },
+
+    async calendarStatus() {
+      return api.adminApi("/api/calendar/status");
+    },
+
+    async startCalendarConnection() {
+      const user = firebase.auth().currentUser;
+      if (!user) throw new Error("Please sign in again.");
+      const idToken = await user.getIdToken(true);
+      const response = await fetch("/api/calendar/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Calendar authorisation could not start.");
+      location.assign("/api/calendar/connect");
+    },
+
+    async adminBookingAction(id, payload) {
+      if (!isLive) {
+        const booking = (await api.getBookings()).find((item) => item.id === id);
+        if (!booking) throw new Error("Booking not found.");
+        if (payload.action === "confirm") return api.confirmBooking(booking);
+        if (payload.action === "reject" || payload.action === "cancel") return api.rejectBooking(booking);
+        const list = demoRead();
+        const target = list.find((item) => item.id === id);
+        Object.assign(target || {}, payload);
+        if (payload.action === "complete") Object.assign(target || {}, { status: "completed", bookingStatus: "completed" });
+        delete (target || {}).action;
+        demoWrite(list);
+        return { ok: true };
+      }
+      return api.adminApi(`/api/admin/bookings/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+    },
+
+    async getAdminBookingConfig() {
+      return api.adminApi("/api/admin/config");
+    },
+
+    async saveAdminBookingConfig(config) {
+      return api.adminApi("/api/admin/config", {
+        method: "PUT",
+        body: JSON.stringify(config),
+      });
+    },
+
     /* Slots already confirmed (and therefore unavailable) on a given date. */
     async getConfirmedSlots(dateStr) {
       if (isLive) {
@@ -102,7 +226,9 @@
     /* Customer submits a booking request — stored as "pending". */
     async submitBooking(booking) {
       const record = Object.assign({}, booking, {
-        status: "pending",
+        status: booking.approvalRequired ? "pending" : "confirmed",
+        bookingStatus: booking.approvalRequired ? "pending_approval" : "confirmed",
+        calendarSyncStatus: "not_required",
         createdAt: new Date().toISOString(),
       });
       if (isLive) {
@@ -135,6 +261,7 @@
           }),
         }).catch(() => {});
       } catch { /* ignore */ }
+      return record;
     },
 
     /* Quote enquiry from the contact form — saved silently for the admin. */
@@ -199,22 +326,19 @@
 
     /* Admin adds an existing booking directly — created as confirmed, slot blocked immediately. */
     async adminAddBooking(booking) {
+      if (isLive) {
+        return api.adminApi("/api/admin/bookings", {
+          method: "POST",
+          body: JSON.stringify(booking),
+        });
+      }
       const record = Object.assign({}, booking, {
         ref: "YA-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
         status: "confirmed",
         createdAt: new Date().toISOString(),
       });
       const slotId = `${record.date}_${record.slot}`;
-      if (isLive) {
-        const slotRef = db.collection("availability").doc(slotId);
-        const bookingRef = db.collection("bookings").doc();
-        await db.runTransaction(async (tx) => {
-          const slotDoc = await tx.get(slotRef);
-          if (slotDoc.exists) throw new Error("That slot is already confirmed for another booking.");
-          tx.set(bookingRef, record);
-          tx.set(slotRef, { date: record.date, slot: record.slot, bookingId: bookingRef.id });
-        });
-      } else {
+      {
         const list = demoRead();
         const clash = list.find((b) => b.date === record.date && b.slot === record.slot && b.status === "confirmed");
         if (clash) throw new Error("That slot is already confirmed for another booking.");

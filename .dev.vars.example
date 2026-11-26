@@ -1,0 +1,11 @@
+SITE_ORIGIN=https://yorkshireautotech.co.uk
+BUSINESS_TIME_ZONE=Europe/London
+FIREBASE_PROJECT_ID=yorkshire-autotech
+FIREBASE_SERVICE_ACCOUNT={"type":"service_account","project_id":"...","private_key_id":"...","private_key":"-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n","client_email":"...","client_id":"..."}
+ADMIN_EMAILS=yorkshireautotech@outlook.com,second-owner@example.com
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=https://yorkshireautotech.co.uk/api/calendar/callback
+GOOGLE_CALENDAR_ID=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_UPLOAD_PRESET=

@@ -4,14 +4,17 @@ service cloud.firestore {
 
     function isAdmin() {
       return request.auth != null
-        && request.auth.token.email == 'yorkshireautotech@outlook.com';
+        && (
+          request.auth.token.email == 'yorkshireautotech@outlook.com'
+          || request.auth.token.admin == true
+        );
     }
 
-    // Booking requests: anyone can submit one (must be "pending"),
-    // the admin can add bookings directly, and only the admin can read/change them.
+    // Booking writes are performed only by Cloudflare Pages Functions using the
+    // service account. Browser clients may not read or write customer records.
     match /bookings/{id} {
-      allow create: if request.resource.data.status == 'pending' || isAdmin();
-      allow read, update, delete: if isAdmin();
+      allow read: if isAdmin();
+      allow create, update, delete: if false;
     }
 
     // Quote enquiries from the contact form: anyone can submit one
@@ -21,11 +24,16 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    // Confirmed-slot markers: publicly readable (no personal data)
-    // so the website can grey out taken slots; only admin can write.
+    // Legacy public availability markers contain no personal data. New booking
+    // reservations are written only by the server, so browser clients stay read-only.
     match /availability/{id} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if false;
+    }
+
+    // OAuth refresh tokens and booking configuration are server-only.
+    match /settings/{id} {
+      allow read, write: if false;
     }
   }
 }

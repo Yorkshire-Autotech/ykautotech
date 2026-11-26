@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/style.css">
   <style>
     body { padding: 40px 20px; }
-    .admin-wrap { max-width: 860px; margin: 0 auto; }
+    .admin-wrap { max-width: 1120px; margin: 0 auto; }
     .admin-wrap h1 { font-size: 2rem; margin-bottom: 6px; }
     .admin-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 28px; }
     .admin-banner {
@@ -87,6 +87,34 @@
     .status-pill.pending { color: var(--gold); }
     .status-pill.confirmed { color: #4caf7d; }
     .status-pill.rejected { color: #e06c6c; }
+    .status-pill.cancelled { color: #e06c6c; }
+    .status-pill.completed { color: #7fa7d9; }
+    .calendar-panel, .admin-settings, .booking-filters {
+      background: var(--black-2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;
+    }
+    .calendar-panel { display: flex; justify-content: space-between; gap: 18px; align-items: center; }
+    .calendar-status { margin: 5px 0 0; color: var(--text-muted); font-size: .85rem; }
+    .calendar-status.connected { color: #72d3a2; }
+    .calendar-status.error { color: #e06c6c; }
+    .booking-filters { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; }
+    .booking-filters input, .booking-filters select, .admin-settings textarea {
+      width: 100%; padding: 11px 13px; background: var(--black-3);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+      font: inherit; font-size: .88rem;
+    }
+    .admin-settings summary { cursor: pointer; color: var(--gold-light); font-weight: 600; }
+    .admin-settings textarea { min-height: 340px; margin: 14px 0; font-family: ui-monospace, monospace; }
+    .sync-status { display: inline-block; font-size: .72rem; padding: 3px 8px; border: 1px solid currentColor; border-radius: 99px; }
+    .sync-status.synced { color: #72d3a2; }
+    .sync-status.pending, .sync-status.not_required { color: var(--gold); }
+    .sync-status.failed { color: #e06c6c; }
+    .booking-photo { width: 74px; height: 74px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+    .booking-photos { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    @media (max-width: 720px) {
+      .calendar-panel { align-items: flex-start; flex-direction: column; }
+      .booking-filters { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -124,6 +152,25 @@
       <p class="admin-sub" id="signedInAs"></p>
       <p class="admin-error" id="adminAccountWarning"></p>
 
+      <div class="calendar-panel">
+        <div>
+          <strong>Google Calendar</strong>
+          <p class="calendar-status" id="calendarStatus">Checking connection…</p>
+        </div>
+        <div class="bc-actions">
+          <button class="btn btn-gold" type="button" id="connectCalendar">Connect Google Calendar</button>
+          <button class="btn btn-outline" type="button" id="refreshCalendarStatus">Refresh status</button>
+        </div>
+      </div>
+
+      <details class="admin-settings">
+        <summary>Services, durations, opening hours &amp; holidays</summary>
+        <p class="admin-sub">Edit the generated configuration carefully. Durations are minutes; ambient lighting reserves 60 minutes while estimating 240 minutes of work.</p>
+        <textarea id="bookingConfigJson" spellcheck="false" aria-label="Booking configuration JSON"></textarea>
+        <button class="btn btn-gold" type="button" id="saveBookingConfig">Save Booking Configuration</button>
+        <p class="admin-error" id="configError"></p>
+      </details>
+
       <p class="section-label">Add a Booking</p>
       <div class="add-booking wa-paste">
         <label for="waPaste">Paste from WhatsApp <span>— copy the customer's message or contact card, paste it here, then press Fill in details</span></label>
@@ -142,6 +189,10 @@
           <div>
             <label for="abSlot">Time Slot *</label>
             <select id="abSlot" required disabled><option value="">Pick a date first</option></select>
+          </div>
+          <div>
+            <label for="abService">Service *</label>
+            <select id="abService" required><option value="electrical-upgrades">Other Electrical Upgrades</option></select>
           </div>
           <div>
             <label for="abName">Customer Name *</label>
@@ -170,10 +221,21 @@
 
       <p class="section-label">Quote Enquiries (from the website form)</p>
       <div id="enquiryList"></div>
+      <div class="booking-filters">
+        <input type="search" id="bookingSearch" placeholder="Search name, registration or reference" aria-label="Search bookings">
+        <select id="bookingServiceFilter" aria-label="Filter service"><option value="">All services</option></select>
+        <select id="bookingTypeFilter" aria-label="Filter booking type">
+          <option value="">All booking types</option>
+          <option value="fitting-only">Fitting Only</option>
+          <option value="supply-and-fit">Supply &amp; Fit</option>
+        </select>
+      </div>
       <p class="section-label">Pending Requests</p>
       <div id="pendingList"></div>
       <p class="section-label">Confirmed Bookings</p>
       <div id="confirmedList"></div>
+      <p class="section-label">Completed Bookings</p>
+      <div id="completedList"></div>
       <p class="section-label">Rejected / Cancelled</p>
       <div id="rejectedList"></div>
     </div>
