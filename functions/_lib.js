@@ -254,7 +254,7 @@ export async function createDocumentsAtomically(env, documents) {
   const projectId = env.FIREBASE_PROJECT_ID || JSON.parse(env.FIREBASE_SERVICE_ACCOUNT || "{}").project_id;
   const token = await googleServiceAccount(env);
   const root = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)`;
-  const response = await fetch(`${root}/documents:batchWrite`, {
+  const response = await fetch(`${root}/documents:commit`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify({
