@@ -254,18 +254,10 @@ export async function createDocumentsAtomically(env, documents) {
   const projectId = env.FIREBASE_PROJECT_ID || JSON.parse(env.FIREBASE_SERVICE_ACCOUNT || "{}").project_id;
   const token = await googleServiceAccount(env);
   const root = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)`;
-  const begin = await fetch(`${root}/documents:beginTransaction`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ options: { readWrite: {} } }),
-  });
-  const transaction = await begin.json();
-  if (!begin.ok || !transaction.transaction) throw new HttpError(502, "Firebase transaction could not start.", "firebase_error");
-  const response = await fetch(`${root}/documents:commit`, {
+  const response = await fetch(`${root}/documents:batchWrite`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      transaction: transaction.transaction,
       writes: documents.map(({ path, value }) => ({
         update: {
           name: `${root}/documents/${path}`,
