@@ -347,8 +347,7 @@ export async function verifyFirebaseUser(request, env) {
     .split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
-  const emailVerified = claims.email_verified === true || claims.email_verified === "true";
-  if (!emailVerified || !allowed.includes(String(claims.email).toLowerCase())) {
+  if (!allowed.includes(String(claims.email).toLowerCase())) {
     throw new HttpError(403, "This account is not authorised to manage bookings.", "not_admin");
   }
   return claims;
